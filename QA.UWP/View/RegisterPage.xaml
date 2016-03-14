@@ -1,0 +1,28 @@
+﻿<Page
+    x:Class="QA.UWP.View.RegisterPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QA.UWP.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    DataContext="{Binding RegisterViewModel,Source={StaticResource Locator}}"
+    mc:Ignorable="d">
+
+    <Grid Style="{StaticResource RootGirdStyle}">
+        <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBox PlaceholderText="邮箱" Text="{Binding RegisterUser.UserName,Mode=TwoWay}" Style="{StaticResource OriginalTextBoxStyle}"/>
+            <PasswordBox PlaceholderText="密码" Password="{Binding RegisterUser.Password,Mode=TwoWay}" Style="{StaticResource OriginalPasswordBoxStyle}" Grid.Row="1"/>
+            <PasswordBox PlaceholderText="确认密码" Password="{Binding RegisterUser.ConfirmPassword,Mode=TwoWay}" Style="{StaticResource OriginalPasswordBoxStyle}" Grid.Row="2"/>
+            <Button Grid.Row="3" IsEnabled="{Binding RegisterButtonIsEnable}" Content="注册" Width="{StaticResource OriginalTextBoxWidth}" Style="{StaticResource NormalButtonStyle}" Command="{Binding RegisterCommand}"/>
+            <ProgressRing Name="LoadingProgressRing" Margin="0,8,8,0" Grid.Row="4" IsActive="{Binding IsRegistering}" Style="{StaticResource SmallProgressBarStyle}"/>
+        </Grid>
+        <TextBlock Text="{Binding RegisterErrorMessage}" Style="{StaticResource ErrorTextBlockStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,100"/>
+    </Grid>
+</Page>

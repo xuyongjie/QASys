@@ -95,10 +95,48 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Core\AccessTokenProvider.cs" />
+    <Compile Include="Core\AppSettings.cs" />
+    <Compile Include="Core\ClientFactory.cs" />
+    <Compile Include="Core\HttpClientFactory.cs" />
+    <Compile Include="Core\INavigatable.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\RegisterEntity.cs" />
+    <Compile Include="Model\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserControl\MyPanel.cs" />
+    <Compile Include="ViewModel\QuestionDetailViewModel.cs" />
+    <Compile Include="ViewModel\AddAnswerViewModel.cs" />
+    <Compile Include="ViewModel\CreateQuestionViewModel.cs" />
+    <Compile Include="ViewModel\LoginViewModel.cs" />
+    <Compile Include="ViewModel\QuestionsViewModel.cs" />
+    <Compile Include="ViewModel\MyViewModelBase.cs" />
+    <Compile Include="ViewModel\RegisterViewModel.cs" />
+    <Compile Include="ViewModel\UserInfoViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\QuestionDetailPage.xaml.cs">
+      <DependentUpon>QuestionDetailPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\AddAnswerPage.xaml.cs">
+      <DependentUpon>AddAnswerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\CreateQuestionPage.xaml.cs">
+      <DependentUpon>CreateQuestionPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\LoginPage.xaml.cs">
+      <DependentUpon>LoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\QuestionsPage.xaml.cs">
+      <DependentUpon>QuestionsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RegisterPage.xaml.cs">
+      <DependentUpon>RegisterPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UserInfoPage.xaml.cs">
+      <DependentUpon>UserInfoPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -125,15 +163,55 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Skin\AppBaseStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\QuestionDetailPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\AddAnswerPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\CreateQuestionPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\LoginPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\QuestionsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\RegisterPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\UserInfoPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Account.Client\Account.Client.csproj">
       <Project>{075b42d6-3ba8-434e-9d04-10db5de0d50f}</Project>
       <Name>Account.Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Entity\Entity.csproj">
+      <Project>{31f18e04-8431-4940-9efc-894001edd3a1}</Project>
+      <Name>Entity</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QA.Client\QA.Client.csproj">
       <Project>{620c3f18-5f2c-449f-9098-e21856ea76a8}</Project>
       <Name>QA.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebApi.Client\WebApi.Client.csproj">
+      <Project>{a0a3d86c-535f-424b-b822-50ca2142ecfd}</Project>
+      <Name>WebApi.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

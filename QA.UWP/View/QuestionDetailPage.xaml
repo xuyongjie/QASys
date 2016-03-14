@@ -1,0 +1,140 @@
+﻿<Page
+    x:Class="QA.UWP.View.QuestionDetailPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:QA.UWP.View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    DataContext="{Binding ActivityDetailViewModel,Source={StaticResource Locator}}"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <DataTemplate x:Key="NodeDataTemplate">
+            <Grid Height="100">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.1*"/>
+                    <ColumnDefinition Width="0.9*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding CreatorId}" Grid.Column="1" Grid.Row="0"/>
+                <TextBlock Text="{Binding Cost}" Grid.Column="1" Grid.Row="1"/>
+                <TextBlock Text="{Binding Comment}" Grid.Column="1" Grid.Row="2"/>
+            </Grid>
+        </DataTemplate>
+        <Flyout x:Key="AddNodeFlyout">
+            <Grid Height="160" Width="100">
+                <StackPanel>
+                    <ComboBox PlaceholderText="类型" ItemsSource="{Binding NodeTypes}" SelectedItem="{Binding SelectedNodeType,Mode=TwoWay}" Style="{StaticResource BaseComboBoxStyle}" HorizontalAlignment="Center">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0.3*"/>
+                                        <ColumnDefinition Width="0.7*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Height="40" Width="40" Source="{Binding Id,Converter={StaticResource NodeTypeIdToTypeImageUriConverter}}"/>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{Binding Name}"/>
+                                        <TextBlock Text="{Binding Description}" Grid.Column="1"/>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button Content="ok" Style="{StaticResource NormalButtonStyle}" Command="{Binding AddNodeSubmitCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Flyout>
+    </Page.Resources>
+
+    <!--<Page.BottomAppBar>
+        <CommandBar>
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Flyout="{StaticResource AddNodeFlyout}" Label="添加" Command="{Binding CreateCommand}">
+                    <AppBarButton.Icon>
+                        <SymbolIcon Symbol="Add"/>
+                    </AppBarButton.Icon>
+                </AppBarButton>
+            </CommandBar.PrimaryCommands>
+        </CommandBar>
+    </Page.BottomAppBar>-->
+    <Grid Style="{StaticResource RootGirdStyle}" Padding="0">
+
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="120"/>
+        </Grid.RowDefinitions>
+        <ListView ItemsSource="{Binding Nodes}" ItemTemplate="{StaticResource NodeDataTemplate}">
+            <ListView.Header>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding CurrentEvent.Title}" Style="{StaticResource NormalTextBlockStyle}"/>
+                    <TextBlock Text="{Binding CurrentEvent.Description}" Style="{StaticResource NormalTextBlockStyle}" Grid.Row="1"/>
+                    <TextBlock Text="{Binding CurrentEvent.CreatorId}" Style="{StaticResource NormalTextBlockStyle}" Grid.Row="2"/>
+                    <TextBlock Style="{StaticResource NormalTextBlockStyle}" Grid.Row="3">
+                <Run Text="参与人("/>
+                <Run Text="{Binding CurrentEvent.TotalMember}"/>
+                <Run Text="):"/>
+                <Run Text="{Binding CurrentEvent.Participants}"/>
+                    </TextBlock>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
+                <Run Text="总支出:" Foreground="White"/>
+                <Run Text="{Binding CurrentEvent.TotalCost}" Foreground="White" FontSize="30"/>
+                <Run Text="￥" Foreground="White"/>
+                    </TextBlock>
+                    <TextBlock Grid.Row="2" Grid.Column="1" Grid.RowSpan="2">
+                <Run Text="人均支出:" Foreground="White"/>
+                <Run Text="{Binding CurrentEvent.AverageCost}" Foreground="White" FontSize="30"/>
+                <Run Text="￥" Foreground="White"/>
+                    </TextBlock>
+                </Grid>
+            </ListView.Header>
+        </ListView>
+        <Grid Grid.Row="1" Background="{StaticResource PureWhiteBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <RelativePanel Margin="10,0,10,0">
+                <Image Margin="5" Name="AddImage" Source="/Resource/Images/imageicon.png" HorizontalAlignment="Left" RelativePanel.AlignVerticalCenterWithPanel="True">
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="Tapped">
+                            <Core:InvokeCommandAction Command="{Binding ChooseImageCommand}"/>
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                </Image>
+                <TextBox Visibility="{Binding ElementName=CostCheckBox,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}" Name="CostTextBox" Style="{StaticResource NormalTextBoxStyle}" Margin="0" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True"/>
+                <CheckBox Name="CostCheckBox" IsChecked="{Binding IsCost,Mode=TwoWay}" FlowDirection="RightToLeft" Margin="0,0,10,0" Content="支出" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.LeftOf="CostTextBox"/>
+                <ListView Margin="5" RelativePanel.RightOf="AddImage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding SelectedImages}" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignTopWithPanel="True" RelativePanel.LeftOf="CostCheckBox">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding ImagePath}" Foreground="Red"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </RelativePanel>
+            <RelativePanel Grid.Row="1" Margin="10,0,0,0">
+                <Button Name="SendButton" Content="发送" Margin="5" Style="{StaticResource NormalButtonStyle}" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True"/>
+                <TextBox Text="{Binding NewNode.Comment,Mode=TwoWay}" BorderThickness="0" Padding="0" Margin="0,0,5,0" TextWrapping="Wrap" RelativePanel.AlignLeftWithPanel="True" RelativePanel.LeftOf="SendButton" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True"/>
+            </RelativePanel>
+        </Grid>
+    </Grid>
+</Page>

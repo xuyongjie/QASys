@@ -42,7 +42,7 @@
     <Compile Include="Answer.cs" />
     <Compile Include="EntityDTO\AnswerDTO.cs" />
     <Compile Include="EntityDTO\NiceDTO.cs" />
-    <Compile Include="EntityDTO\QuestionAttentionDTO.cs" />
+    <Compile Include="EntityDTO\QuestionDetailDTO.cs" />
     <Compile Include="EntityDTO\QuestionDTO.cs" />
     <Compile Include="ICreateAndModify.cs" />
     <Compile Include="Nice.cs" />

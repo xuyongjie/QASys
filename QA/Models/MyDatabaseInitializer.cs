@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Entity;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Data.Entity;
 
@@ -15,7 +16,12 @@ namespace QA.Models
             user.Email = "xuyongjie1128@hotmail.com";
             user.NickName = "YoungJay";
             user.PhoneNumber = "18867101652";
-            user.HeadImageUrl = "";
+            user.HeadImageUrl = "https://xuyongjie.blob.core.windows.net/aatravelcontainer/xuyongjie_130948036118754842_thumbnail.jpg";
+            context.Users.Add(user);
+            Question question = new Question();
+            question.UserId = user.Id;
+            question.Content = "My first question!";
+            context.Questions.Add(question);
             context.SaveChanges();
             base.Seed(context);
         }

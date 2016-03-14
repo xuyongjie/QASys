@@ -7,6 +7,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -67,6 +68,8 @@ namespace QA.UWP
                 Window.Current.Content = rootFrame;
             }
 
+            rootFrame.Navigated += RootFrame_Navigated;
+
             if (rootFrame.Content == null)
             {
                 // When the navigation stack isn't restored navigate to the first page,
@@ -76,6 +79,24 @@ namespace QA.UWP
             }
             // Ensure the current window is active
             Window.Current.Activate();
+            SystemNavigationManager.GetForCurrentView().BackRequested += App_BackRequested;
+        }
+
+        private void RootFrame_Navigated(object sender, NavigationEventArgs e)
+        {
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = (Window.Current.Content
+                 as Frame).BackStack.Any() ? AppViewBackButtonVisibility.Visible : AppViewBackButtonVisibility.Collapsed;
+        }
+
+        private void App_BackRequested(object sender, BackRequestedEventArgs e)
+        {
+            var rootFrame = Window.Current.Content as Frame;
+            if(!rootFrame.CanGoBack)
+            {
+                return;
+            }
+            rootFrame.GoBack();
+            e.Handled = true;
         }
 
         /// <summary>

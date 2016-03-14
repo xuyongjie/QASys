@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Entity.EntityDTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace QA.Repo
 {
     interface IAnswerRepository
     {
+        IEnumerable<AnswerDTO> GetAllAnswersByQuestionId(int questionId);
     }
 }

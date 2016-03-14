@@ -9,8 +9,9 @@ namespace QA.Repo
     interface IQuestionRepository
     {
         IEnumerable<QuestionDTO> GetAllQuestions();
-        IEnumerable<QuestionDTO> GetRaisedQuestions();
-        IEnumerable<QuestionDTO> GetTimeLineAllQuestions();
-        QuestionDTO GetQuestionById(int questionId);
+        IEnumerable<QuestionDTO> GetRaisedQuestions(string userId);
+        IEnumerable<QuestionDTO> GetAttentionQuestions(string userId);
+        IEnumerable<QuestionDTO> GetTimeLineAllQuestions(string userId);
+        QuestionDetailDTO GetQuestionById(int questionId);
     }
 }

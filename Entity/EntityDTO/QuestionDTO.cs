@@ -9,5 +9,11 @@ namespace Entity.EntityDTO
     public class QuestionDTO
     {
         public int Id { get; set; }
+        public string UserId { get; set; }
+        public string UserNickName { get; set; }
+        public string UserHeadImageUrl { get; set; }
+        public string Content { get; set; }
+        public int AttentionCount { get; set; }
+        public int AnswerCount { get; set; }
     }
 }
