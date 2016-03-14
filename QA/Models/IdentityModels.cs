@@ -14,6 +14,8 @@ namespace QA.Models
     // 可以通过向 ApplicationUser 类添加更多属性来为用户添加个人资料数据，若要了解详细信息，请访问 http://go.microsoft.com/fwlink/?LinkID=317594。
     public class ApplicationUser : IdentityUser, ICreateAndModify
     {
+        public string NickName { get; set; }
+        public string HeadImageUrl { get; set; }
         public DateTime CreateTime
         {
             get; set;
@@ -39,6 +41,7 @@ namespace QA.Models
             : base("DefaultConnection", throwIfV1Schema: false)
         {
             this.Configuration.LazyLoadingEnabled = false;
+            Database.SetInitializer(new MyDatabaseInitializer());
         }
 
         public static ApplicationDbContext Create()

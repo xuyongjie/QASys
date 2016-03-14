@@ -5,12 +5,12 @@
     <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{31F18E04-8431-4940-9EFC-894001EDD3A1}</ProjectGuid>
+    <ProjectGuid>{075B42D6-3BA8-434E-9D04-10DB5DE0D50F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Entity</RootNamespace>
-    <AssemblyName>Entity</AssemblyName>
-    <DefaultLanguage>zh-CN</DefaultLanguage>
+    <RootNamespace>Account.Client</RootNamespace>
+    <AssemblyName>Account.Client</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkProfile>
@@ -39,16 +39,37 @@
     <!-- A reference to the entire .NET Framework is automatically included -->
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Answer.cs" />
-    <Compile Include="EntityDTO\AnswerDTO.cs" />
-    <Compile Include="EntityDTO\NiceDTO.cs" />
-    <Compile Include="EntityDTO\QuestionAttentionDTO.cs" />
-    <Compile Include="EntityDTO\QuestionDTO.cs" />
-    <Compile Include="ICreateAndModify.cs" />
-    <Compile Include="Nice.cs" />
+    <Compile Include="AccountClient.cs" />
+    <Compile Include="AuthenticationHandler.cs" />
+    <Compile Include="HttpAuthenticationHandler.cs" />
+    <Compile Include="HttpRequestMessageExtensions.cs" />
+    <Compile Include="IAccessTokenProvider.cs" />
+    <Compile Include="IAccessTokenStore.cs" />
+    <Compile Include="Models\AccessTokenResponse.cs" />
+    <Compile Include="Models\AddExternalLogin.cs" />
+    <Compile Include="Models\ChangePassword.cs" />
+    <Compile Include="Models\ChangePasswordResponse.cs" />
+    <Compile Include="Models\ErrorResponse.cs" />
+    <Compile Include="Models\ExternalLogin.cs" />
+    <Compile Include="Models\Login.cs" />
+    <Compile Include="Models\ManageInfo.cs" />
+    <Compile Include="Models\RegisterExternalResponse.cs" />
+    <Compile Include="Models\RegisterExternalUser.cs" />
+    <Compile Include="Models\RegisterResponse.cs" />
+    <Compile Include="Models\RegisterUser.cs" />
+    <Compile Include="Models\RemoveLogin.cs" />
+    <Compile Include="Models\SetPassword.cs" />
+    <Compile Include="Models\SetPasswordResponse.cs" />
+    <Compile Include="Models\UserInfo.cs" />
+    <Compile Include="Models\UserLoginInfo.cs" />
+    <Compile Include="OAuth2BearerTokenHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Question.cs" />
-    <Compile Include="QuestionAttention.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebApi.Client\WebApi.Client.csproj">
+      <Project>{a0a3d86c-535f-424b-b822-50ca2142ecfd}</Project>
+      <Name>WebApi.Client</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
