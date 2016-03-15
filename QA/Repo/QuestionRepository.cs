@@ -7,6 +7,7 @@ using Entity.EntityDTO;
 using QA.Models;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using Microsoft.AspNet.Identity;
 
 namespace QA.Repo
 {
@@ -19,7 +20,19 @@ namespace QA.Repo
         }
         public IEnumerable<QuestionDTO> GetAllQuestions()
         {
-            return dbContext.Questions.Select(q => new QuestionDTO() { Id = q.Id, UserId = q.UserId, AnswerCount = dbContext.Answers.Where(a => a.Id == q.Id).Count(), AttentionCount = dbContext.QuestionAttentions.Where(qa => qa.QuestionId == q.Id).Count(), Content = q.Content, UserHeadImageUrl = dbContext.Users.First(u => u.Id == q.UserId).HeadImageUrl, UserNickName = dbContext.Users.First(u => u.Id == q.UserId).NickName });
+            var questionQuery = from q in dbContext.Questions
+                                join u in dbContext.Users on q.UserId equals u.Id
+                                select new QuestionDTO()
+                                {
+                                    Id = q.Id,
+                                    UserId = q.UserId,
+                                    AnswerCount = dbContext.Answers.Where(a => a.Id == q.Id).Count(),
+                                    AttentionCount = dbContext.QuestionAttentions.Where(qa => qa.QuestionId == q.Id).Count(),
+                                    Content = q.Content,
+                                    UserHeadImageUrl = u.HeadImageUrl,
+                                    UserNickName = u.NickName
+                                };
+            return questionQuery.ToList();
         }
 
         public IEnumerable<QuestionDTO> GetAttentionQuestions(string userId)
@@ -29,7 +42,18 @@ namespace QA.Repo
 
         public QuestionDetailDTO GetQuestionById(int questionId)
         {
-            throw new NotImplementedException();
+            var question = dbContext.Questions.First(q => q.Id == questionId);
+            var user = dbContext.Users.FirstOrDefault(u => u.Id == question.UserId);
+            return new QuestionDetailDTO
+            {
+                Id = question.Id,
+                Content = question.Content,
+                CreateTime = question.CreateTime,
+                UserId = user.Id,
+                UserNickName = user.NickName,
+                UserHeadImageUrl = user.HeadImageUrl,
+                Answers = dbContext.Answers.Where(a => a.QuestionId == questionId).Select(a => new AnswerDTO { }).ToList()
+            };
         }
 
         public IEnumerable<QuestionDTO> GetRaisedQuestions(string userId)
