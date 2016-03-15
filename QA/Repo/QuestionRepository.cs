@@ -26,8 +26,9 @@ namespace QA.Repo
                                 {
                                     Id = q.Id,
                                     UserId = q.UserId,
-                                    AnswerCount = dbContext.Answers.Where(a => a.Id == q.Id).Count(),
+                                    AnswerCount = dbContext.Answers.Where(a => a.QuestionId == q.Id).Count(),
                                     AttentionCount = dbContext.QuestionAttentions.Where(qa => qa.QuestionId == q.Id).Count(),
+                                    Title=q.Title,
                                     Content = q.Content,
                                     UserHeadImageUrl = u.HeadImageUrl,
                                     UserNickName = u.NickName
@@ -37,34 +38,77 @@ namespace QA.Repo
 
         public IEnumerable<QuestionDTO> GetAttentionQuestions(string userId)
         {
-            return null;
-        }
-
-        public QuestionDetailDTO GetQuestionById(int questionId)
-        {
-            var question = dbContext.Questions.First(q => q.Id == questionId);
-            var user = dbContext.Users.FirstOrDefault(u => u.Id == question.UserId);
-            return new QuestionDetailDTO
-            {
-                Id = question.Id,
-                Content = question.Content,
-                CreateTime = question.CreateTime,
-                UserId = user.Id,
-                UserNickName = user.NickName,
-                UserHeadImageUrl = user.HeadImageUrl,
-                Answers = dbContext.Answers.Where(a => a.QuestionId == questionId).Select(a => new AnswerDTO { }).ToList()
-            };
+            var questionQuery = from qa in dbContext.QuestionAttentions
+                                where qa.UserId == userId
+                                join u in dbContext.Users on qa.UserId equals u.Id
+                                join q in dbContext.Questions on qa.QuestionId equals q.Id
+                                select new QuestionDTO
+                                {
+                                    Id = q.Id,
+                                    UserId = u.Id,
+                                    AnswerCount = dbContext.Answers.Where(a => a.QuestionId == q.Id).Count(),
+                                    AttentionCount = dbContext.QuestionAttentions.Where(qa => qa.QuestionId == q.Id).Count(),
+                                    Title = q.Title,
+                                    Content = q.Content,
+                                    UserHeadImageUrl = u.HeadImageUrl,
+                                    UserNickName = u.NickName
+                                };
+            return questionQuery.ToList();
         }
 
         public IEnumerable<QuestionDTO> GetRaisedQuestions(string userId)
         {
-            return dbContext.Questions.Where(q => q.UserId == userId).Select(q => new QuestionDTO() { Id = q.Id, UserId = q.UserId, AnswerCount = dbContext.Answers.Where(a => a.Id == q.Id).Count(), AttentionCount = dbContext.QuestionAttentions.Where(qa => qa.QuestionId == q.Id).Count(), Content = q.Content, UserHeadImageUrl = dbContext.Users.First(u => u.Id == q.UserId).HeadImageUrl, UserNickName = dbContext.Users.First(u => u.Id == q.UserId).NickName });
+            var questionQuery = from q in dbContext.Questions
+                                where q.UserId == userId
+                                join u in dbContext.Users on q.UserId equals u.Id
+                                select new QuestionDTO()
+                                {
+                                    Id = q.Id,
+                                    UserId = q.UserId,
+                                    AnswerCount = dbContext.Answers.Where(a => a.QuestionId == q.Id).Count(),
+                                    AttentionCount = dbContext.QuestionAttentions.Where(qa => qa.QuestionId == q.Id).Count(),
+                                    Title = q.Title,
+                                    Content = q.Content,
+                                    UserHeadImageUrl = u.HeadImageUrl,
+                                    UserNickName = u.NickName
+                                };
+            return questionQuery.ToList();
+        }
+        public QuestionDetailDTO GetQuestionDetailById(int questionId)
+        {
+            var answersQuery = from a in dbContext.Answers
+                               where a.QuestionId == questionId
+                               join fu in dbContext.Users on a.FromUserId equals fu.Id
+                               join tu in dbContext.Users on a.ToUserId equals tu.Id
+                               select new AnswerDTO
+                               {
+                                   Content = a.Content,
+                                   CreateTime = a.CreateTime,
+                                   FromUserId = a.FromUserId,
+                                   ToUserId = a.ToUserId,
+                                   FromUserNickName = fu.NickName,
+                                   ToUserNickName = tu.NickName,
+                                   QuestionId = a.QuestionId,
+                                   NiceCount = dbContext.Nices.Where(n => n.AnswerId == a.Id).Count()
+                               };
+            var questionDetailQuery = from q in dbContext.Questions
+                                      where q.Id == questionId
+                                      join u in dbContext.Users
+                                      on q.UserId equals u.Id
+                                      select new QuestionDetailDTO
+                                      {
+                                          Id = q.Id,
+                                          Title = q.Title,
+                                          Content = q.Content,
+                                          CreateTime = q.CreateTime,
+                                          UserId = u.Id,
+                                          UserNickName = u.NickName,
+                                          UserHeadImageUrl = u.HeadImageUrl,
+                                          Answers = answersQuery.ToList()
+                                      };
+            return questionDetailQuery.FirstOrDefault();
         }
 
-        public IEnumerable<QuestionDTO> GetTimeLineAllQuestions(string userId)
-        {
-            return null;
-        }
 
         /// <summary>
         /// 添加问题
@@ -79,15 +123,13 @@ namespace QA.Repo
 
         }
 
-        /// <summary>
-        /// 更新问题
-        /// </summary>
-        /// <param name="questionId"></param>
-        /// <param name="question"></param>
-        /// <returns>0表示该问题不存在；1表示更新成功；-1更新出错</returns>
-        public int UpdateQuestion(int questionId, Question question)
+        public int UpdateQuestion(string userId,int questionId, Question question)
         {
-
+            var q = dbContext.Questions.Find(questionId);
+            if(q==null||q.UserId!=userId)
+            {
+                return 0;
+            }
             dbContext.Entry(question).State = EntityState.Modified;
             try
             {
@@ -95,34 +137,30 @@ namespace QA.Repo
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!QuestionExists(questionId))
-                {
                     return 0;
-                }
-                else
-                {
-                    return -1;
-                }
             }
             return 1;
         }
 
 
-        public int DeleteQuestionById(int questionId)
+        public int DeleteQuestionById(string userId,int questionId)
         {
             Question question = dbContext.Questions.Find(questionId);
             if (question == null)
             {
                 return 0;
             }
-
+            if(question.UserId!=userId)
+            {
+                return 0;
+            }
             dbContext.Questions.Remove(question);
             dbContext.SaveChanges();
             return 1;
         }
+
         private bool QuestionExists(int id)
         {
-
             return dbContext.Questions.Count(e => e.Id == id) > 0;
         }
 

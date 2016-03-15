@@ -13,7 +13,7 @@ namespace Entity.EntityDTO
         public string FromUserId { get; set; }
         public string FromUserNickName { get; set; }
         public string ToUserId { get; set; }
-        public string ToUserName { get; set; }
+        public string ToUserNickName { get; set; }
         public string Content { get; set; }
         public int NiceCount { get; set; }
 

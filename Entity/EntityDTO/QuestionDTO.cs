@@ -12,6 +12,7 @@ namespace Entity.EntityDTO
         public string UserId { get; set; }
         public string UserNickName { get; set; }
         public string UserHeadImageUrl { get; set; }
+        public string Title { get; set; }
         public string Content { get; set; }
         public int AttentionCount { get; set; }
         public int AnswerCount { get; set; }

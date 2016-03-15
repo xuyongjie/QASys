@@ -12,6 +12,7 @@ namespace Entity.EntityDTO
         public string UserId { get; set; }
         public string UserNickName { get; set; }
         public string UserHeadImageUrl { get; set; }
+        public string Title { get; set; }
         public string Content { get; set; }
         public DateTime CreateTime { get; set; }
         public List<AnswerDTO> Answers { get; set; }

@@ -11,7 +11,7 @@ namespace Entity
         public int Id { get; set; }
         public string UserId { get; set; }
         public int QuestionId { get; set; }
-        public virtual Question AttentionQuestion { get; set; }
+        public virtual Question Question { get; set; }
 
         public DateTime CreateTime
         {

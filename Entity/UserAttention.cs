@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace Entity
 {
-    public class Question:ICreateAndModify
+    public class UserAttention : ICreateAndModify
     {
         public int Id { get; set; }
-        public string UserId { get; set; }
-        public string Title { get; set; }
-        public string Content { get; set; }
-        public virtual List<Answer> Answers { get; set; }
-
+        public string FromUserId { get; set; }
+        public string ToUserId { get; set; }
         public DateTime CreateTime
         {
             get; set;

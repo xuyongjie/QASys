@@ -71,6 +71,7 @@ namespace QA.Models
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<QuestionAttention> QuestionAttentions { get; set; }
+        public DbSet<UserAttention> UserAttentions { get; set; }
         public DbSet<Nice> Nices { get; set; }
 
     }
