@@ -2,7 +2,19 @@
     x:Class="QA.UWP.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="using:QA.UWP.Converter"
     xmlns:local="using:QA.UWP"
+    xmlns:locator="using:QA.UWP.ViewModel"
     RequestedTheme="Light">
-
+    <Application.Resources>
+        <ResourceDictionary>
+            <converter:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+            <converter:NullableDoubleConverter x:Key="NullableDoubleConverter"/>
+            <converter:NodeTypeIdToTypeImageUriConverter x:Key="NodeTypeIdToTypeImageUriConverter"/>
+            <locator:ViewModelLocator x:Key="Locator"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Skin/AppBaseStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>

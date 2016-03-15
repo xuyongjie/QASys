@@ -226,6 +226,7 @@
     <Compile Include="Repo\IAnswerRepository.cs" />
     <Compile Include="Repo\IQuestionRepository.cs" />
     <Compile Include="Repo\QuestionRepository.cs" />
+    <Compile Include="Response\BaseResponse.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

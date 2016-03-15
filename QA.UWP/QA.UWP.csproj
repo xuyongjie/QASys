@@ -95,6 +95,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converter\BoolToVisibilityConvertor.cs" />
+    <Compile Include="Converter\NodeTypeIdToTypeImagePathConverter.cs" />
+    <Compile Include="Converter\NullableDoubleConverter.cs" />
     <Compile Include="Core\AccessTokenProvider.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\ClientFactory.cs" />

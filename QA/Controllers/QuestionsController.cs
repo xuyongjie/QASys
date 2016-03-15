@@ -10,24 +10,26 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Entity;
 using QA.Models;
+using QA.Repo;
+using Entity.EntityDTO;
 
 namespace QA.Controllers
 {
     public class QuestionsController : ApiController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
-
+        //private ApplicationDbContext db = new ApplicationDbContext();
+        private readonly IQuestionRepository repo = new QuestionRepository();
         // GET: api/Questions
-        public IQueryable<Question> GetQuestions()
+        public IEnumerable<QuestionDTO> GetQuestions()
         {
-            return db.Questions;
+            return repo.GetAllQuestions();
         }
 
         // GET: api/Questions/5
         [ResponseType(typeof(Question))]
         public IHttpActionResult GetQuestion(int id)
         {
-            Question question = db.Questions.Find(id);
+            QuestionDetailDTO question = repo.GetQuestionById(id);
             if (question == null)
             {
                 return NotFound();
@@ -50,25 +52,12 @@ namespace QA.Controllers
                 return BadRequest();
             }
 
-            db.Entry(question).State = EntityState.Modified;
-
-            try
+            int result=repo.UpdateQuestion(id, question);
+            if(result==1)
             {
-                db.SaveChanges();
+                    return StatusCode(HttpStatusCode.NoContent);
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!QuestionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return BadRequest("请求的Question不存在或者未知错误");
         }
 
         // POST: api/Questions
@@ -79,9 +68,7 @@ namespace QA.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            db.Questions.Add(question);
-            db.SaveChanges();
+            repo.CreateQuestion(question);
 
             return CreatedAtRoute("DefaultApi", new { id = question.Id }, question);
         }
@@ -90,30 +77,16 @@ namespace QA.Controllers
         [ResponseType(typeof(Question))]
         public IHttpActionResult DeleteQuestion(int id)
         {
-            Question question = db.Questions.Find(id);
-            if (question == null)
-            {
-                return NotFound();
-            }
-
-            db.Questions.Remove(question);
-            db.SaveChanges();
-
-            return Ok(question);
+            return Ok(repo.DeleteQuestionById(id));
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                repo.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        private bool QuestionExists(int id)
-        {
-            return db.Questions.Count(e => e.Id == id) > 0;
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace AATravel.UWP.Converter
+namespace QA.UWP.Converter
 {
     public class BooleanToVisibilityConverter : IValueConverter
     {
