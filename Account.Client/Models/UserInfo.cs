@@ -12,8 +12,7 @@ namespace Account.Client
         public string PhoneNumber { get; set; }
         public string NickName { get; set; }
         public string UserName { get; set; }
-        public string AvatarUrl { get; set; }
-        public string Motto { get; set; }
+        public string HeadImageUrl { get; set; }
         public string LoginProvider { get; set; }
         public bool HasRegistered { get; set; }
     }

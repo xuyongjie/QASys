@@ -12,7 +12,12 @@ namespace Entity.EntityDTO
         public int QuestionId { get; set; }
         public string FromUserId { get; set; }
         public string FromUserNickName { get; set; }
-        public string ToAnswerId { get; set; }
+        public int ToAnswerId { get; set; }
+        /// <summary>
+        /// 0 ToQuestion
+        /// 1 ToAnswer
+        /// </summary>
+        public int AnswerType { get; set; }
         public string ToUserId { get; set; }
         public string ToUserNickName { get; set; }
         public string Content { get; set; }

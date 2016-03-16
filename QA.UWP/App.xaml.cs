@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QA.UWP.View;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -75,7 +76,7 @@ namespace QA.UWP
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                rootFrame.Navigate(typeof(QuestionsPage), e.Arguments);
             }
             // Ensure the current window is active
             Window.Current.Activate();

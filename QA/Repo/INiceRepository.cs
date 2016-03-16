@@ -11,6 +11,6 @@ namespace QA.Repo
     {
         int CreateNice(Nice nice);
         int RemoveNice(string userId, int answerId);
-        Nice GetNiceDetail(int niceId);
+        Nice GetNice(int niceId);
     }
 }

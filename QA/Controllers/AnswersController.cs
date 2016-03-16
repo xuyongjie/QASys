@@ -10,110 +10,82 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Entity;
 using QA.Models;
+using QA.Repo;
+using Microsoft.AspNet.Identity.Owin;
+using Entity.EntityDTO;
+using Microsoft.AspNet.Identity;
 
 namespace QA.Controllers
 {
     public class AnswersController : ApiController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private readonly IAnswerRepository repo = new AnswerRepository();
 
-        // GET: api/Answers
-        public IQueryable<Answer> GetAnswers()
+        private ApplicationUserManager _userManager;
+        public ApplicationUserManager UserManager
         {
-            return db.Answers;
+            get
+            {
+                return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
         }
 
-        // GET: api/Answers/5
-        [ResponseType(typeof(Answer))]
+        // GET: api/answers/detail/5
+        [ResponseType(typeof(AnswerDTO))]
+        [ActionName("Detail")]
+        [HttpGet]
         public IHttpActionResult GetAnswer(int id)
         {
-            Answer answer = db.Answers.Find(id);
-            if (answer == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(answer);
+            return Ok(repo.GetAnswer(id));
         }
 
-        // PUT: api/Answers/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutAnswer(int id, Answer answer)
+        // POST: api/answers/create
+        [ResponseType(typeof(AnswerDTO))]
+        [ActionName("Create")]
+        [HttpPost]
+        public IHttpActionResult PostAnswer(Answer answer)
         {
-            if (!ModelState.IsValid)
+            if (repo.CreateAnswer(answer) == 1)
             {
-                return BadRequest(ModelState);
+                Dictionary<string, object> values = new Dictionary<string, object>();
+                values.Add("controller", "answers");
+                values.Add("action", "Detail");
+                values.Add("id", answer.Id);
+                return CreatedAtRoute("DefaultApi", values, answer);
             }
-
-            if (id != answer.Id)
+            else
             {
                 return BadRequest();
             }
-
-            db.Entry(answer).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AnswerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Answers
-        [ResponseType(typeof(Answer))]
-        public IHttpActionResult PostAnswer(Answer answer)
+        // DELETE: api/answers/remove/5
+        [ResponseType(typeof(void))]
+        [ActionName("Remove")]
+        [HttpDelete]
+        public IHttpActionResult DeleteAnswer(int answerId)
         {
-            if (!ModelState.IsValid)
+            if (repo.RemoveAnswer(UserManager.FindByName(User.Identity.Name).Id, answerId) == 1)
             {
-                return BadRequest(ModelState);
+                return Ok();
             }
-
-            db.Answers.Add(answer);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = answer.Id }, answer);
-        }
-
-        // DELETE: api/Answers/5
-        [ResponseType(typeof(Answer))]
-        public IHttpActionResult DeleteAnswer(int id)
-        {
-            Answer answer = db.Answers.Find(id);
-            if (answer == null)
+            else
             {
-                return NotFound();
+                return BadRequest();
             }
-
-            db.Answers.Remove(answer);
-            db.SaveChanges();
-
-            return Ok(answer);
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                repo.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        private bool AnswerExists(int id)
-        {
-            return db.Answers.Count(e => e.Id == id) > 0;
         }
     }
 }

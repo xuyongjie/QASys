@@ -54,14 +54,15 @@ namespace QA.Controllers
         [AllowAnonymous]
         [ResponseType(typeof(QuestionDetailDTO))]
         [ActionName("Detail")]
+        [HttpGet]
         public IHttpActionResult GetQuestionDetail(int id)
         {
             string userId = null;
-            if(User.Identity.IsAuthenticated)
+            if (User.Identity.IsAuthenticated)
             {
-                userId=UserManager.FindByName(User.Identity.Name).Id;
+                userId = UserManager.FindByName(User.Identity.Name).Id;
             }
-            QuestionDetailDTO question = repo.GetQuestionDetailById(userId,id);
+            QuestionDetailDTO question = repo.GetQuestionDetailById(userId, id);
             if (question == null)
             {
                 return NotFound();
@@ -73,6 +74,7 @@ namespace QA.Controllers
         // PUT: api/Questions/update/5
         [ResponseType(typeof(string))]
         [ActionName("Update")]
+        [HttpPut]
         public IHttpActionResult PutQuestion(int id, Question question)
         {
             if (!ModelState.IsValid)
@@ -80,10 +82,10 @@ namespace QA.Controllers
                 return BadRequest(ModelState);
             }
 
-            int result=repo.UpdateQuestion(UserManager.FindByName(User.Identity.Name).Id,id, question);
-            if(result==1)
+            int result = repo.UpdateQuestion(UserManager.FindByName(User.Identity.Name).Id, id, question);
+            if (result == 1)
             {
-                    return StatusCode(HttpStatusCode.NoContent);
+                return StatusCode(HttpStatusCode.NoContent);
             }
             return BadRequest("请求的Question不存在或者未知错误");
         }
@@ -91,23 +93,35 @@ namespace QA.Controllers
         // POST: api/Questions/Create
         [ResponseType(typeof(QuestionDetailDTO))]
         [ActionName("Create")]
+        [HttpPost]
         public IHttpActionResult PostQuestion(Question question)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            repo.CreateQuestion(question);
+            if (repo.CreateQuestion(question) == 1)
+            {
 
-            return CreatedAtRoute("DefaultApi", new { id = question.Id }, question);
+                Dictionary<string, object> values = new Dictionary<string, object>();
+                values.Add("controller", "questions");
+                values.Add("action", "Detail");
+                values.Add("id", question.Id);
+                return CreatedAtRoute("DefaultApi", values, question);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
 
         // DELETE: api/Questions/remove/5
         [ResponseType(typeof(int))]
         [ActionName("Remove")]
+        [HttpDelete]
         public IHttpActionResult DeleteQuestion(int id)
         {
-            return Ok(repo.DeleteQuestionById(UserManager.FindByName(User.Identity.Name).Id,id));
+            return Ok(repo.DeleteQuestionById(UserManager.FindByName(User.Identity.Name).Id, id));
         }
 
         protected override void Dispose(bool disposing)

@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace QA.Repo
 {
-    interface IQuestionAttentionRepository:IDisposable
+    interface IQuestionAttentionRepository : IDisposable
     {
         int CreateQuestionAttention(QuestionAttention attention);
-        int RemoveQuestionAttention(string userId,int questionId);
+        int RemoveQuestionAttention(string userId, int questionId);
+        QuestionAttention GetQuestionAttention(int id);
     }
 }

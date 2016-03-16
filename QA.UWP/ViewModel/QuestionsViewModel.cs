@@ -13,11 +13,12 @@ using Windows.UI.Xaml.Controls;
 
 namespace QA.UWP.ViewModel
 {
-    public class QuestionsViewModel:MyViewModelBase,INavigatable
+    public class QuestionsViewModel : MyViewModelBase, INavigatable
     {
         public QuestionsViewModel()
         {
             _allQuestions = new ObservableCollection<QuestionDTO>();
+            _myAttentionQuestions = new ObservableCollection<QuestionDTO>();
             FirstLoad();
         }
 
@@ -33,6 +34,20 @@ namespace QA.UWP.ViewModel
         {
             get { return _allQuestions; }
             set { Set(ref _allQuestions, value); }
+        }
+
+        private ObservableCollection<QuestionDTO> _myAttentionQuestions;
+        public ObservableCollection<QuestionDTO> MyAttentionQuestions
+        {
+            get { return _myAttentionQuestions; }
+            set { Set(ref _myAttentionQuestions, value); }
+        }
+
+        private int _pivotSelectedIndex;
+        public int PivotSelectedIndex
+        {
+            get { return _pivotSelectedIndex; }
+            set { Set(ref _pivotSelectedIndex, value); }
         }
 
         private QuestionDTO _selectedQuestion;
@@ -63,7 +78,7 @@ namespace QA.UWP.ViewModel
             {
                 result = await client.GetUserInfoAsync();
             }
-            if(result!=null&&result.Succeeded)
+            if (result != null && result.Succeeded)
             {
                 MyInfo = result.Content;
             }
@@ -79,16 +94,39 @@ namespace QA.UWP.ViewModel
             using (QAClient client = ClientFactory.CreateTravelClient())
             {
                 result = null;
-                //result=await client.GetMyEventListAsync();
+                result = await client.GetAllQuestionsAsync();
             }
-            if(result!=null&&result.Succeeded)
+            if (result != null && result.Succeeded)
             {
                 AllQuestions = new ObservableCollection<QuestionDTO>(result.Content);
             }
             else
             {
                 StringBuilder builder = new StringBuilder("Load Error:");
-                foreach(var item in result.Errors)
+                foreach (var item in result.Errors)
+                {
+                    builder.Append(item).Append("\n");
+                }
+                LoadErrorMessage = builder.ToString();
+            }
+        }
+
+        public async Task GetMyAttentionQuestions()
+        {
+            HttpResult<List<QuestionDTO>> result;
+            using (QAClient client = ClientFactory.CreateTravelClient())
+            {
+                result = null;
+                result = await client.GetAttentionQuestionsAsync();
+            }
+            if (result != null && result.Succeeded)
+            {
+                MyAttentionQuestions = new ObservableCollection<QuestionDTO>(result.Content);
+            }
+            else
+            {
+                StringBuilder builder = new StringBuilder("Load Error:");
+                foreach (var item in result.Errors)
                 {
                     builder.Append(item).Append("\n");
                 }
@@ -109,16 +147,26 @@ namespace QA.UWP.ViewModel
             IsLoading = true;
             await GetMyInfo();
             await GetAllQuestions();
+            await GetMyAttentionQuestions();
             IsLoading = false;
         }
 
-        private RelayCommand _loadCommand;
-        public RelayCommand LoadCommand
+        private RelayCommand _refreshAllCommand;
+        public RelayCommand RefreshAllCommand
         {
-            get {
-                return _loadCommand ?? (_loadCommand = new RelayCommand(() =>
+            get
+            {
+                return _refreshAllCommand ?? (_refreshAllCommand = new RelayCommand(async () =>
               {
-                 
+                  if (PivotSelectedIndex == 0)
+                  {
+
+                      await GetAllQuestions();
+                  }
+                  else if (PivotSelectedIndex == 1)
+                  {
+                      await GetMyAttentionQuestions();
+                  }
               }));
             }
         }
@@ -126,7 +174,8 @@ namespace QA.UWP.ViewModel
         private RelayCommand _createCommand;
         public RelayCommand CreateCommand
         {
-            get {
+            get
+            {
                 return _createCommand ?? (_createCommand = new RelayCommand(() =>
               {
                   NavigationService.NavigateTo(typeof(CreateQuestionViewModel).FullName);
@@ -137,7 +186,8 @@ namespace QA.UWP.ViewModel
         private RelayCommand<object> _itemClickCommand;
         public RelayCommand<object> ItemClickCommand
         {
-            get {
+            get
+            {
                 return _itemClickCommand ?? (_itemClickCommand = new RelayCommand<object>((parameter) =>
               {
                   ItemClickEventArgs arg = parameter as ItemClickEventArgs;

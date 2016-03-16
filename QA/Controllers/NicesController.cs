@@ -16,6 +16,7 @@ using Microsoft.AspNet.Identity;
 
 namespace QA.Controllers
 {
+    [Authorize]
     public class NicesController : ApiController
     {
         private readonly INiceRepository repo = new NiceRepository();
@@ -33,20 +34,28 @@ namespace QA.Controllers
             }
         }
 
-        // GET: api/nices/5
+        // GET: api/Nices/detail/5
         [ResponseType(typeof(Nice))]
+        [ActionName("Detail")]
+        [HttpGet]
         public IHttpActionResult GetNice(int id)
         {
-            return Ok(repo.GetNiceDetail(id));
+            return Ok(repo.GetNice(id));
         }
 
-        // POST: api/Nices
+        // POST: api/Nices/create
         [ResponseType(typeof(Nice))]
+        [ActionName("Create")]
+        [HttpPost]
         public IHttpActionResult PostNice(Nice nice)
         {
             if (repo.CreateNice(nice)==1)
             {
-                return CreatedAtRoute("DefaultApi", new { id = nice.Id }, nice);
+                Dictionary<string, object> values = new Dictionary<string, object>();
+                values.Add("controller", "nices");
+                values.Add("action", "Detail");
+                values.Add("id", nice.Id);
+                return CreatedAtRoute("DefaultApi", values, nice);
             }
             else
             {
@@ -54,8 +63,10 @@ namespace QA.Controllers
             }
         }
 
-        // DELETE: api/Nices/5
+        // DELETE: api/Nices/remove/5
         [ResponseType(typeof(void))]
+        [ActionName("Remove")]
+        [HttpDelete]
         public IHttpActionResult DeleteNice(int answerId)
         {
             if (repo.RemoveNice(UserManager.FindByName(User.Identity.Name).Id, answerId) == 1)

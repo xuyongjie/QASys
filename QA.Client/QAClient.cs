@@ -14,44 +14,44 @@ namespace QA.Client
     {
         private const string QuestionPrefix = "api/Questions/";
         private const string AnswerPrefix = "api/Answers/";
-		
-		private const string GetAllQuestions="all";
-		private const string GetAllTimeLineQuestions="timeline";
-		private const string CreateQuestion="";
-		
-		private const string CreateAnswer="";
+
+        private const string GetAllQuestions = "all";
+        private const string GetAttentionQuestions = "attention";
+        private const string CreateQuestion = "";
+
+        private const string CreateAnswer = "";
 
         public HttpClient HttpClient { get; private set; }
         private bool disposed;
         public QAClient(HttpClient client)
         {
-            if(client==null)
+            if (client == null)
             {
                 throw new ArgumentNullException();
             }
             this.HttpClient = client;
         }
-		
-		
-		
-		public async Task<HttpResult<List<QuestionDTO>>> GetAllQuestionsAsync()
+
+
+
+        public async Task<HttpResult<List<QuestionDTO>>> GetAllQuestionsAsync()
         {
             ThrowIfDisposed();
-            HttpResult<List<QuestionDTO>> result = await HttpClient.GetAsync<List<QuestionDTO>>(GetAllQuestions);
+            HttpResult<List<QuestionDTO>> result = await HttpClient.GetAsync<List<QuestionDTO>>(QuestionPrefix + GetAllQuestions);
             return result;
         }
-		
-		public async Task<HttpResult<List<QuestionDTO>>> GetTimeLineAllQuestionsAsync()
+
+        public async Task<HttpResult<List<QuestionDTO>>> GetAttentionQuestionsAsync()
         {
             ThrowIfDisposed();
-            HttpResult<List<QuestionDTO>> result = await HttpClient.GetAsync<List<QuestionDTO>>(GetAllTimeLineQuestions);
+            HttpResult<List<QuestionDTO>> result = await HttpClient.GetAsync<List<QuestionDTO>>(QuestionPrefix + GetAttentionQuestions);
             return result;
         }
 
         public async Task<HttpResult<QuestionDetailDTO>> GetQuestionDetailByQuestionIdAsync(int questionId)
         {
             ThrowIfDisposed();
-            HttpResult<QuestionDetailDTO> result = await HttpClient.GetAsync<QuestionDetailDTO>(QuestionPrefix+questionId.ToString());
+            HttpResult<QuestionDetailDTO> result = await HttpClient.GetAsync<QuestionDetailDTO>(QuestionPrefix + questionId.ToString());
             return result;
         }
 
@@ -62,20 +62,20 @@ namespace QA.Client
             return result;
         }
 
-		
-		
-		
+
+
+
         public async Task<HttpResult<AnswerDTO>> PostAnswerAsync(Answer answer)
         {
             ThrowIfDisposed();
             HttpResult<AnswerDTO> result = await HttpClient.PostAsJsonAsync<Answer, AnswerDTO>(CreateAnswer, answer);
             return result;
         }
-		
-		
+
+
         public void Dispose()
         {
-            if(!disposed)
+            if (!disposed)
             {
                 HttpClient.Dispose();
                 disposed = true;
@@ -84,7 +84,7 @@ namespace QA.Client
 
         private void ThrowIfDisposed()
         {
-            if(disposed)
+            if (disposed)
             {
                 throw new ObjectDisposedException(GetType().FullName);
             }

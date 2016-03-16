@@ -82,21 +82,51 @@ namespace QA.Repo
         }
         public QuestionDetailDTO GetQuestionDetailById(string userId, int questionId)
         {
-            var answersQuery = from a in dbContext.Answers
-                               where a.QuestionId == questionId
-                               join fu in dbContext.Users on a.FromUserId equals fu.Id
-                               select new AnswerDTO
-                               {
-                                   Content = a.Content,
-                                   CreateTime = a.CreateTime,
-                                   FromUserId = a.FromUserId,
-                                   ToAnswerId = a.ToAnswerId,
-                                   FromUserNickName = fu.NickName,
-                                   ToUserId = string.IsNullOrEmpty(a.ToAnswerId) ? null :"1",
-                                   ToUserNickName = string.IsNullOrEmpty(a.ToAnswerId) ? null : dbContext.Users.Where(u => u.Id == ta.FromUserId).FirstOrDefault().NickName,
-                                   QuestionId = a.QuestionId,
-                                   NiceCount = dbContext.Nices.Where(n => n.AnswerId == a.Id).Count()
-                               };
+            var questionUserQuery = from q in dbContext.Questions
+                                    where q.Id == questionId
+                                    join u in dbContext.Users on q.UserId equals u.Id
+                                    select u;
+            var user = questionUserQuery.FirstOrDefault();
+
+
+            var toAnswerAnswersQuery = from a in dbContext.Answers
+                                       where a.QuestionId == questionId && a.AnswerType == 1
+                                       join fu in dbContext.Users on a.FromUserId equals fu.Id
+                                       join ta in dbContext.Answers on a.ToAnswerId equals ta.Id
+                                       join tafu in dbContext.Users on ta.FromUserId equals tafu.Id
+                                       select new AnswerDTO
+                                       {
+                                           Id=a.Id,
+                                           Content = a.Content,
+                                           CreateTime = a.CreateTime,
+                                           FromUserId = a.FromUserId,
+                                           ToAnswerId = a.ToAnswerId,
+                                           FromUserNickName = fu.NickName,
+                                           ToUserId = ta.FromUserId,
+                                           ToUserNickName = tafu.NickName,
+                                           QuestionId = a.QuestionId,
+                                           NiceCount = dbContext.Nices.Where(n => n.AnswerId == a.Id).Count()
+                                       };
+            var toQuestionAnswersQuery = from a in dbContext.Answers
+                                         where a.QuestionId == questionId && a.AnswerType == 0
+                                         join fu in dbContext.Users on a.FromUserId equals fu.Id
+                                         select new AnswerDTO
+                                         {
+                                             Id=a.Id,
+                                             Content = a.Content,
+                                             CreateTime = a.CreateTime,
+                                             FromUserId = a.FromUserId,
+                                             ToAnswerId = a.ToAnswerId,
+                                             FromUserNickName = fu.NickName,
+                                             ToUserId = user.Id,
+                                             ToUserNickName = user.NickName,
+                                             QuestionId = a.QuestionId,
+                                             NiceCount = dbContext.Nices.Where(n => n.AnswerId == a.Id).Count()
+                                         };
+
+            var answers = toQuestionAnswersQuery.ToList();
+            answers.AddRange(toAnswerAnswersQuery.ToList());
+
             bool attented = false;
             if (!string.IsNullOrEmpty(userId))
             {
@@ -120,9 +150,13 @@ namespace QA.Repo
                                           UserNickName = u.NickName,
                                           AttentedOrNot = attented,
                                           UserHeadImageUrl = u.HeadImageUrl,
-                                          Answers = answersQuery.ToList()
                                       };
-            return questionDetailQuery.FirstOrDefault();
+            var result = questionDetailQuery.FirstOrDefault();
+            if(result!=null)
+            {
+                result.Answers = answers;
+            }
+            return result;
         }
 
 

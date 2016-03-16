@@ -68,10 +68,19 @@ namespace QA.Models
 
             Answer answer1 = new Answer();
             answer1.FromUserId = user2.Id;
-            answer1.ToAnswerId = question1.UserId;
+            answer1.AnswerType = 0;
             answer1.QuestionId = question1.Id;
             answer1.Content = "You are a programer,you came from china,you will go to save the world!";
             context.Answers.Add(answer1);
+            context.SaveChanges();
+
+            Answer answer2 = new Answer();
+            answer2.FromUserId = user1.Id;
+            answer2.AnswerType = 1;
+            answer2.ToAnswerId = answer1.Id;
+            answer2.QuestionId = question1.Id;
+            answer2.Content = "Thank you!";
+            context.Answers.Add(answer2);
             context.SaveChanges();
 
             Nice nice = new Nice();

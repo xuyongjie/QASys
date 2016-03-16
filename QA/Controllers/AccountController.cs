@@ -58,10 +58,14 @@ namespace QA.Controllers
         public UserInfoViewModel GetUserInfo()
         {
             ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
-
+            var user = UserManager.FindByName(User.Identity.Name);
             return new UserInfoViewModel
             {
-                Email = User.Identity.GetUserName(),
+                Email = user.Email,
+                UserName=user.UserName,
+                NickName=user.NickName,
+                HeadImageUrl=user.HeadImageUrl,
+                CreateTime=user.CreateTime,
                 HasRegistered = externalLogin == null,
                 LoginProvider = externalLogin != null ? externalLogin.LoginProvider : null
             };

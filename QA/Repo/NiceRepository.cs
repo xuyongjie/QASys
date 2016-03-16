@@ -14,7 +14,7 @@ namespace QA.Repo
         {
             dbContext = new ApplicationDbContext();
         }
-        public Nice GetNiceDetail(int niceId)
+        public Nice GetNice(int niceId)
         {
             var query = from n in dbContext.Nices where n.Id == niceId select n;
             return query.FirstOrDefault();
@@ -38,10 +38,6 @@ namespace QA.Repo
         {
             Nice nice = dbContext.Nices.Where(n => n.UserId == userId && n.AnswerId == answerId).FirstOrDefault();
             if (nice == null)
-            {
-                return 0;
-            }
-            if (nice.UserId != userId)
             {
                 return 0;
             }

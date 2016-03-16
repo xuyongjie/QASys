@@ -34,14 +34,28 @@ namespace QA.Controllers
             }
         }
 
-
-        // POST: api/QuestionAttentions
+        // GET: api/QuestionAttentions/detail/5
         [ResponseType(typeof(QuestionAttention))]
+        [ActionName("Detail")]
+        [HttpGet]
+        public IHttpActionResult GetNice(int id)
+        {
+            return Ok(repo.GetQuestionAttention(id));
+        }
+
+        // POST: api/QuestionAttentions/create
+        [ResponseType(typeof(QuestionAttention))]
+        [ActionName("Create")]
+        [HttpPost]
         public IHttpActionResult PostQuestionAttention(QuestionAttention questionAttention)
         {
             if (repo.CreateQuestionAttention(questionAttention) == 1)
             {
-                return CreatedAtRoute("DefaultApi", new { id = questionAttention.Id }, questionAttention);
+                Dictionary<string, object> values = new Dictionary<string, object>();
+                values.Add("controller", "questionattentions");
+                values.Add("action", "Detail");
+                values.Add("id", questionAttention.Id);
+                return CreatedAtRoute("DefaultApi", values, questionAttention);
             }
             else
             {
@@ -49,8 +63,10 @@ namespace QA.Controllers
             }
         }
 
-        // DELETE: api/QuestionAttentions/5
+        // DELETE: api/QuestionAttentions/remove/5
         [ResponseType(typeof(void))]
+        [ActionName("Remove")]
+        [HttpDelete]
         public IHttpActionResult DeleteQuestionAttention(int questionId)
         {
             if (repo.RemoveQuestionAttention(UserManager.FindByName(User.Identity.Name).Id, questionId) == 1)

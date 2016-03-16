@@ -48,5 +48,10 @@ namespace QA.Repo
         {
             dbContext.Dispose();
         }
+
+        public QuestionAttention GetQuestionAttention(int id)
+        {
+            return dbContext.QuestionAttentions.Find(id);
+        }
     }
 }

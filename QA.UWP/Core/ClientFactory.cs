@@ -8,8 +8,8 @@ namespace QA.UWP.Core
     public static class ClientFactory
     {
         // HTTPS address is required by the WebAuthenticationBroker
-        //public const string BaseAddress = "http://localhost:11281/";
-        public const string BaseAddress = "http://xyjvd.cloudapp.net";
+        public const string BaseAddress = "http://localhost:53669/";
+        //public const string BaseAddress = "http://xyjvd.cloudapp.net:8086";
 
         public static HttpClient CreateHttpClient()
         {

@@ -28,7 +28,10 @@ namespace QA.Models
     public class UserInfoViewModel
     {
         public string Email { get; set; }
-
+        public string UserName { get; set; }
+        public string NickName { get; set; }
+        public string HeadImageUrl { get; set; }
+        public DateTime CreateTime { get; set; }
         public bool HasRegistered { get; set; }
 
         public string LoginProvider { get; set; }
