@@ -82,14 +82,10 @@ namespace QA.Repo
         }
         public QuestionDetailDTO GetQuestionDetailById(string userId, int questionId)
         {
-            var userQuery = from q in dbContext.Questions
-                            where q.Id == questionId
-                            join u in dbContext.Users on q.UserId equals u.Id
-                            select u;
             var answersQuery = from a in dbContext.Answers
                                where a.QuestionId == questionId
                                join fu in dbContext.Users on a.FromUserId equals fu.Id
-                               join tu in dbContext.Users on a.ToUserId equals tu.Id
+                               join ta in dbContext.Answers on a.ToAnswerId equals ta.Id
                                select new AnswerDTO
                                {
                                    Content = a.Content,
@@ -97,8 +93,8 @@ namespace QA.Repo
                                    FromUserId = a.FromUserId,
                                    ToAnswerId = a.ToAnswerId,
                                    FromUserNickName = fu.NickName,
-                                   ToUserId = string.IsNullOrEmpty(a.ToAnswerId) ? null: tu.Id,
-                                   ToUserNickName = string.IsNullOrEmpty(a.ToAnswerId) ? null : tu.NickName,
+                                   ToUserId = string.IsNullOrEmpty(a.ToAnswerId) ? null : ta.FromUserId,
+                                   ToUserNickName = string.IsNullOrEmpty(a.ToAnswerId) ? null : dbContext.Users.Where(u => u.Id == ta.FromUserId).FirstOrDefault().NickName,
                                    QuestionId = a.QuestionId,
                                    NiceCount = dbContext.Nices.Where(n => n.AnswerId == a.Id).Count()
                                };
