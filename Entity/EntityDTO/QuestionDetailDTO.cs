@@ -14,6 +14,7 @@ namespace Entity.EntityDTO
         public string UserHeadImageUrl { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
+        public bool AttentedOrNot { get; set; }
         public DateTime CreateTime { get; set; }
         public List<AnswerDTO> Answers { get; set; }
     }

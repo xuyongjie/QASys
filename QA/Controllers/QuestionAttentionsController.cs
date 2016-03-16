@@ -10,110 +10,66 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Entity;
 using QA.Models;
+using QA.Repo;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
 
 namespace QA.Controllers
 {
+    [Authorize]
     public class QuestionAttentionsController : ApiController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private readonly IQuestionAttentionRepository repo = new QuestionAttentionRepository();
 
-        // GET: api/QuestionAttentions
-        public IQueryable<QuestionAttention> GetQuestionAttentions()
+        private ApplicationUserManager _userManager;
+        public ApplicationUserManager UserManager
         {
-            return db.QuestionAttentions;
+            get
+            {
+                return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
         }
 
-        // GET: api/QuestionAttentions/5
-        [ResponseType(typeof(QuestionAttention))]
-        public IHttpActionResult GetQuestionAttention(int id)
-        {
-            QuestionAttention questionAttention = db.QuestionAttentions.Find(id);
-            if (questionAttention == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(questionAttention);
-        }
-
-        // PUT: api/QuestionAttentions/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutQuestionAttention(int id, QuestionAttention questionAttention)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != questionAttention.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(questionAttention).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!QuestionAttentionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
 
         // POST: api/QuestionAttentions
         [ResponseType(typeof(QuestionAttention))]
         public IHttpActionResult PostQuestionAttention(QuestionAttention questionAttention)
         {
-            if (!ModelState.IsValid)
+            if (repo.CreateQuestionAttention(questionAttention) == 1)
             {
-                return BadRequest(ModelState);
+                return CreatedAtRoute("DefaultApi", new { id = questionAttention.Id }, questionAttention);
             }
-
-            db.QuestionAttentions.Add(questionAttention);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = questionAttention.Id }, questionAttention);
+            else
+            {
+                return BadRequest();
+            }
         }
 
         // DELETE: api/QuestionAttentions/5
-        [ResponseType(typeof(QuestionAttention))]
-        public IHttpActionResult DeleteQuestionAttention(int id)
+        [ResponseType(typeof(void))]
+        public IHttpActionResult DeleteQuestionAttention(int questionId)
         {
-            QuestionAttention questionAttention = db.QuestionAttentions.Find(id);
-            if (questionAttention == null)
+            if (repo.RemoveQuestionAttention(UserManager.FindByName(User.Identity.Name).Id, questionId) == 1)
             {
-                return NotFound();
+                return Ok();
             }
-
-            db.QuestionAttentions.Remove(questionAttention);
-            db.SaveChanges();
-
-            return Ok(questionAttention);
+            else
+            {
+                return BadRequest();
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                repo.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        private bool QuestionAttentionExists(int id)
-        {
-            return db.QuestionAttentions.Count(e => e.Id == id) > 0;
         }
     }
 }

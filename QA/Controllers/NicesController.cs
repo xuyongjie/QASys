@@ -10,110 +10,71 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Entity;
 using QA.Models;
+using QA.Repo;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
 
 namespace QA.Controllers
 {
     public class NicesController : ApiController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private readonly INiceRepository repo = new NiceRepository();
 
-        // GET: api/Nices
-        public IQueryable<Nice> GetNices()
+        private ApplicationUserManager _userManager;
+        public ApplicationUserManager UserManager
         {
-            return db.Nices;
+            get
+            {
+                return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
         }
 
-        // GET: api/Nices/5
+        // GET: api/nices/5
         [ResponseType(typeof(Nice))]
         public IHttpActionResult GetNice(int id)
         {
-            Nice nice = db.Nices.Find(id);
-            if (nice == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(nice);
-        }
-
-        // PUT: api/Nices/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutNice(int id, Nice nice)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != nice.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(nice).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!NiceExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(repo.GetNiceDetail(id));
         }
 
         // POST: api/Nices
         [ResponseType(typeof(Nice))]
         public IHttpActionResult PostNice(Nice nice)
         {
-            if (!ModelState.IsValid)
+            if (repo.CreateNice(nice)==1)
             {
-                return BadRequest(ModelState);
+                return CreatedAtRoute("DefaultApi", new { id = nice.Id }, nice);
             }
-
-            db.Nices.Add(nice);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = nice.Id }, nice);
+            else
+            {
+                return BadRequest();
+            }
         }
 
         // DELETE: api/Nices/5
-        [ResponseType(typeof(Nice))]
-        public IHttpActionResult DeleteNice(int id)
+        [ResponseType(typeof(void))]
+        public IHttpActionResult DeleteNice(int answerId)
         {
-            Nice nice = db.Nices.Find(id);
-            if (nice == null)
+            if (repo.RemoveNice(UserManager.FindByName(User.Identity.Name).Id, answerId) == 1)
             {
-                return NotFound();
+                return Ok();
             }
-
-            db.Nices.Remove(nice);
-            db.SaveChanges();
-
-            return Ok(nice);
+            else
+            {
+                return BadRequest();
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                db.Dispose();
+                repo.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        private bool NiceExists(int id)
-        {
-            return db.Nices.Count(e => e.Id == id) > 0;
         }
     }
 }

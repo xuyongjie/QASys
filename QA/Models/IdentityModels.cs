@@ -12,19 +12,11 @@ using System.Linq;
 namespace QA.Models
 {
     // 可以通过向 ApplicationUser 类添加更多属性来为用户添加个人资料数据，若要了解详细信息，请访问 http://go.microsoft.com/fwlink/?LinkID=317594。
-    public class ApplicationUser : IdentityUser, ICreateAndModify
+    public class ApplicationUser : IdentityUser
     {
         public string NickName { get; set; }
         public string HeadImageUrl { get; set; }
-        public DateTime CreateTime
-        {
-            get; set;
-        }
-
-        public DateTime ModifyTime
-        {
-            get; set;
-        }
+        public DateTime CreateTime { get; set; }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager, string authenticationType)
         {
@@ -51,7 +43,7 @@ namespace QA.Models
 
         public override int SaveChanges()
         {
-            foreach (var history in this.ChangeTracker.Entries().Where(e => e.Entity is ICreateAndModify && (e.State == EntityState.Added ||e.State == EntityState.Modified)).Select(e => e.Entity as ICreateAndModify))
+            foreach (var history in this.ChangeTracker.Entries().Where(e => e.Entity is ICreateAndModify && (e.State == EntityState.Added || e.State == EntityState.Modified)).Select(e => e.Entity as ICreateAndModify))
             {
                 history.ModifyTime = DateTime.Now;
                 if (history.CreateTime == DateTime.MinValue)

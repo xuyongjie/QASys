@@ -16,5 +16,6 @@ namespace Entity.EntityDTO
         public string Content { get; set; }
         public int AttentionCount { get; set; }
         public int AnswerCount { get; set; }
+        public DateTime CreateTime { get; set; }
     }
 }

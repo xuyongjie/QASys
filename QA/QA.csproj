@@ -213,7 +213,6 @@
     <Compile Include="Controllers\NicesController.cs" />
     <Compile Include="Controllers\QuestionAttentionsController.cs" />
     <Compile Include="Controllers\QuestionsController.cs" />
-    <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -223,13 +222,18 @@
     <Compile Include="Models\MyDatabaseInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
+    <Compile Include="Repo\AnswerRepository.cs" />
     <Compile Include="Repo\IAnswerRepository.cs" />
+    <Compile Include="Repo\INiceRepository.cs" />
     <Compile Include="Repo\IQuestionAttentionRepository.cs" />
     <Compile Include="Repo\IQuestionRepository.cs" />
+    <Compile Include="Repo\NiceRepository.cs" />
+    <Compile Include="Repo\QuestionAttentionRepository.cs" />
     <Compile Include="Repo\QuestionRepository.cs" />
     <Compile Include="Results\BaseResponse.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="Util\Helper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />

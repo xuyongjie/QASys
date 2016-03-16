@@ -16,6 +16,7 @@ using Microsoft.Owin.Security.OAuth;
 using QA.Models;
 using QA.Providers;
 using QA.Results;
+using QA.Util;
 
 namespace QA.Controllers
 {
@@ -328,7 +329,7 @@ namespace QA.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email,NickName=model.Email.Substring(0,model.Email.IndexOf('@')),HeadImageUrl=Helper.DEFAULT_HEAD_IMAGE_URL,CreateTime=DateTime.Now };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 

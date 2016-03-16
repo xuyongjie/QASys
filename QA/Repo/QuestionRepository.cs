@@ -22,14 +22,16 @@ namespace QA.Repo
         {
             var questionQuery = from q in dbContext.Questions
                                 join u in dbContext.Users on q.UserId equals u.Id
+                                orderby q.CreateTime
                                 select new QuestionDTO()
                                 {
                                     Id = q.Id,
                                     UserId = q.UserId,
                                     AnswerCount = dbContext.Answers.Where(a => a.QuestionId == q.Id).Count(),
                                     AttentionCount = dbContext.QuestionAttentions.Where(qa => qa.QuestionId == q.Id).Count(),
-                                    Title=q.Title,
+                                    Title = q.Title,
                                     Content = q.Content,
+                                    CreateTime = q.CreateTime,
                                     UserHeadImageUrl = u.HeadImageUrl,
                                     UserNickName = u.NickName
                                 };
@@ -42,6 +44,7 @@ namespace QA.Repo
                                 where qa.UserId == userId
                                 join u in dbContext.Users on qa.UserId equals u.Id
                                 join q in dbContext.Questions on qa.QuestionId equals q.Id
+                                orderby qa.CreateTime descending
                                 select new QuestionDTO
                                 {
                                     Id = q.Id,
@@ -50,6 +53,7 @@ namespace QA.Repo
                                     AttentionCount = dbContext.QuestionAttentions.Where(qa => qa.QuestionId == q.Id).Count(),
                                     Title = q.Title,
                                     Content = q.Content,
+                                    CreateTime = q.CreateTime,
                                     UserHeadImageUrl = u.HeadImageUrl,
                                     UserNickName = u.NickName
                                 };
@@ -61,6 +65,7 @@ namespace QA.Repo
             var questionQuery = from q in dbContext.Questions
                                 where q.UserId == userId
                                 join u in dbContext.Users on q.UserId equals u.Id
+                                orderby q.CreateTime descending
                                 select new QuestionDTO()
                                 {
                                     Id = q.Id,
@@ -69,13 +74,18 @@ namespace QA.Repo
                                     AttentionCount = dbContext.QuestionAttentions.Where(qa => qa.QuestionId == q.Id).Count(),
                                     Title = q.Title,
                                     Content = q.Content,
+                                    CreateTime = q.CreateTime,
                                     UserHeadImageUrl = u.HeadImageUrl,
                                     UserNickName = u.NickName
                                 };
             return questionQuery.ToList();
         }
-        public QuestionDetailDTO GetQuestionDetailById(int questionId)
+        public QuestionDetailDTO GetQuestionDetailById(string userId, int questionId)
         {
+            var userQuery = from q in dbContext.Questions
+                            where q.Id == questionId
+                            join u in dbContext.Users on q.UserId equals u.Id
+                            select u;
             var answersQuery = from a in dbContext.Answers
                                where a.QuestionId == questionId
                                join fu in dbContext.Users on a.FromUserId equals fu.Id
@@ -85,12 +95,22 @@ namespace QA.Repo
                                    Content = a.Content,
                                    CreateTime = a.CreateTime,
                                    FromUserId = a.FromUserId,
-                                   ToUserId = a.ToUserId,
+                                   ToAnswerId = a.ToAnswerId,
                                    FromUserNickName = fu.NickName,
-                                   ToUserNickName = tu.NickName,
+                                   ToUserId = string.IsNullOrEmpty(a.ToAnswerId) ? null: tu.Id,
+                                   ToUserNickName = string.IsNullOrEmpty(a.ToAnswerId) ? null : tu.NickName,
                                    QuestionId = a.QuestionId,
                                    NiceCount = dbContext.Nices.Where(n => n.AnswerId == a.Id).Count()
                                };
+            bool attented = false;
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var attentionQuery = from qa in dbContext.QuestionAttentions
+                                     where qa.UserId == userId && qa.QuestionId == questionId
+                                     select qa;
+                attented = attentionQuery.Count() > 0;
+            }
+
             var questionDetailQuery = from q in dbContext.Questions
                                       where q.Id == questionId
                                       join u in dbContext.Users
@@ -103,6 +123,7 @@ namespace QA.Repo
                                           CreateTime = q.CreateTime,
                                           UserId = u.Id,
                                           UserNickName = u.NickName,
+                                          AttentedOrNot = attented,
                                           UserHeadImageUrl = u.HeadImageUrl,
                                           Answers = answersQuery.ToList()
                                       };
@@ -123,10 +144,10 @@ namespace QA.Repo
 
         }
 
-        public int UpdateQuestion(string userId,int questionId, Question question)
+        public int UpdateQuestion(string userId, int questionId, Question question)
         {
             var q = dbContext.Questions.Find(questionId);
-            if(q==null||q.UserId!=userId)
+            if (q == null || q.UserId != userId)
             {
                 return 0;
             }
@@ -137,20 +158,20 @@ namespace QA.Repo
             }
             catch (DbUpdateConcurrencyException)
             {
-                    return 0;
+                return 0;
             }
             return 1;
         }
 
 
-        public int DeleteQuestionById(string userId,int questionId)
+        public int DeleteQuestionById(string userId, int questionId)
         {
             Question question = dbContext.Questions.Find(questionId);
             if (question == null)
             {
                 return 0;
             }
-            if(question.UserId!=userId)
+            if (question.UserId != userId)
             {
                 return 0;
             }

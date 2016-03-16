@@ -1,6 +1,8 @@
 ﻿using Entity;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using QA.Util;
+using System;
 using System.Data.Entity;
 
 namespace QA.Models
@@ -10,14 +12,16 @@ namespace QA.Models
         protected override void Seed(ApplicationDbContext context)
         {
             //TODO add some initialization
+            ApplicationUserManager manager = new ApplicationUserManager(new UserStore<ApplicationUser>(context));
             ApplicationUser user1 = new ApplicationUser();
             user1.UserName = "xuyongjie1128@hotmail.com";
             user1.PasswordHash = new PasswordHasher().HashPassword("123456");
             user1.Email = "xuyongjie1128@hotmail.com";
             user1.NickName = "YoungJay";
             user1.PhoneNumber = "18867101652";
-            user1.HeadImageUrl = "https://xuyongjie.blob.core.windows.net/aatravelcontainer/xuyongjie_130948036118754842_thumbnail.jpg";
-            context.Users.Add(user1);
+            user1.HeadImageUrl = Helper.DEFAULT_HEAD_IMAGE_URL;
+            user1.CreateTime = DateTime.Now;
+            manager.Create(user1);
 
             ApplicationUser user2 = new ApplicationUser();
             user2.UserName = "854207907@qq.com";
@@ -25,8 +29,9 @@ namespace QA.Models
             user2.Email = "854207907@qq.com";
             user2.NickName = "YoungJay QQ";
             user2.PhoneNumber = "18867101652";
-            user2.HeadImageUrl = "https://xuyongjie.blob.core.windows.net/aatravelcontainer/xuyongjie_130948036118754842_thumbnail.jpg";
-            context.Users.Add(user2);
+            user2.HeadImageUrl = Helper.DEFAULT_HEAD_IMAGE_URL;
+            user2.CreateTime = DateTime.Now;
+            manager.Create(user2);
             context.SaveChanges();
 
             Question question1 = new Question();
@@ -63,7 +68,7 @@ namespace QA.Models
 
             Answer answer1 = new Answer();
             answer1.FromUserId = user2.Id;
-            answer1.ToUserId = question1.UserId;
+            answer1.ToAnswerId = question1.UserId;
             answer1.QuestionId = question1.Id;
             answer1.Content = "You are a programer,you came from china,you will go to save the world!";
             context.Answers.Add(answer1);

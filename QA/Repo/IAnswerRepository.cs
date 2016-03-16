@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace QA.Repo
 {
-    interface IAnswerRepository
+    interface IAnswerRepository:IDisposable
     {
-        IEnumerable<AnswerDTO> GetAllAnswersByQuestionId(int questionId);
+
     }
 }

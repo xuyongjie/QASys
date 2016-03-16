@@ -31,7 +31,7 @@ namespace QA.Repo
         /// </summary>
         /// <param name="questionId"></param>
         /// <returns></returns>
-        QuestionDetailDTO GetQuestionDetailById(int questionId);
+        QuestionDetailDTO GetQuestionDetailById(string userId,int questionId);
         /// <summary>
         /// 更新某个问题
         /// </summary>

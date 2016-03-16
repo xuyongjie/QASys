@@ -17,6 +17,7 @@ using Microsoft.AspNet.Identity.Owin;
 
 namespace QA.Controllers
 {
+    [Authorize]
     public class QuestionsController : ApiController
     {
         private readonly IQuestionRepository repo = new QuestionRepository();
@@ -55,7 +56,12 @@ namespace QA.Controllers
         [ActionName("Detail")]
         public IHttpActionResult GetQuestionDetail(int id)
         {
-            QuestionDetailDTO question = repo.GetQuestionDetailById(id);
+            string userId = null;
+            if(User.Identity.IsAuthenticated)
+            {
+                userId=UserManager.FindByName(User.Identity.Name).Id;
+            }
+            QuestionDetailDTO question = repo.GetQuestionDetailById(userId,id);
             if (question == null)
             {
                 return NotFound();

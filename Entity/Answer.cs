@@ -13,6 +13,7 @@ namespace Entity
         public virtual Question LinkQuestion { get; set; }
         public string FromUserId { get; set; }
         public string ToUserId { get; set; }
+        public string ToAnswerId { get; set; }
         public string Content { get; set; }
         public virtual List<Nice> Nices { get; set; }
 
