@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QA.UWP.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,9 +23,16 @@ namespace QA.UWP.View
     /// </summary>
     public sealed partial class UserInfoPage : Page
     {
+        INavigatable vm;
         public UserInfoPage()
         {
             this.InitializeComponent();
+            vm = DataContext as INavigatable;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            vm.NavigateTo(e.Parameter);
         }
     }
 }

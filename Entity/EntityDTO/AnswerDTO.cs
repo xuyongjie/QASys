@@ -22,7 +22,7 @@ namespace Entity.EntityDTO
         public string ToUserNickName { get; set; }
         public string Content { get; set; }
         public int NiceCount { get; set; }
-
+        public bool NiceOrNot { get; set; }
         public DateTime CreateTime
         {
             get; set;

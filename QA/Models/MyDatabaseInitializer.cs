@@ -17,7 +17,7 @@ namespace QA.Models
             user1.UserName = "xuyongjie1128@hotmail.com";
             user1.PasswordHash = new PasswordHasher().HashPassword("123456");
             user1.Email = "xuyongjie1128@hotmail.com";
-            user1.NickName = "YoungJay";
+            user1.NickName = "硝烟探花";
             user1.PhoneNumber = "18867101652";
             user1.HeadImageUrl = Helper.DEFAULT_HEAD_IMAGE_URL;
             user1.CreateTime = DateTime.Now;
@@ -27,7 +27,7 @@ namespace QA.Models
             user2.UserName = "854207907@qq.com";
             user2.PasswordHash = new PasswordHasher().HashPassword("123456");
             user2.Email = "854207907@qq.com";
-            user2.NickName = "YoungJay QQ";
+            user2.NickName = "杰杰杰";
             user2.PhoneNumber = "18867101652";
             user2.HeadImageUrl = Helper.DEFAULT_HEAD_IMAGE_URL;
             user2.CreateTime = DateTime.Now;

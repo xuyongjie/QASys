@@ -49,6 +49,7 @@ namespace QA.Controllers
         [HttpPost]
         public IHttpActionResult PostQuestionAttention(QuestionAttention questionAttention)
         {
+            questionAttention.UserId = User.Identity.GetUserId();
             if (repo.CreateQuestionAttention(questionAttention) == 1)
             {
                 Dictionary<string, object> values = new Dictionary<string, object>();
@@ -67,9 +68,9 @@ namespace QA.Controllers
         [ResponseType(typeof(void))]
         [ActionName("Remove")]
         [HttpDelete]
-        public IHttpActionResult DeleteQuestionAttention(int questionId)
+        public IHttpActionResult DeleteQuestionAttention(int id)
         {
-            if (repo.RemoveQuestionAttention(UserManager.FindByName(User.Identity.Name).Id, questionId) == 1)
+            if (repo.RemoveQuestionAttention(UserManager.FindByName(User.Identity.Name).Id, id) == 1)
             {
                 return Ok();
             }

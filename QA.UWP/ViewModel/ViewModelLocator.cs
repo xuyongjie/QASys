@@ -11,7 +11,7 @@ namespace QA.UWP.ViewModel
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
             var navigationService = InitNavigationService();
-            SimpleIoc.Default.Register<INavigationService>(()=>navigationService);
+            SimpleIoc.Default.Register<INavigationService>(() => navigationService);
             SimpleIoc.Default.Register<LoginViewModel>();
             SimpleIoc.Default.Register<RegisterViewModel>();
             SimpleIoc.Default.Register<QuestionsViewModel>();
@@ -35,7 +35,7 @@ namespace QA.UWP.ViewModel
             }
         }
 
-        public QuestionsViewModel MyActivitiesViewModel
+        public QuestionsViewModel QuestionsViewModel
         {
             get
             {
@@ -43,12 +43,12 @@ namespace QA.UWP.ViewModel
             }
         }
 
-        public CreateQuestionViewModel CreateActivityViewModel
+        public CreateQuestionViewModel CreateQuestionViewModel
         {
             get { return ServiceLocator.Current.GetInstance<CreateQuestionViewModel>(); }
         }
 
-        public QuestionDetailViewModel ActivityDetailViewModel
+        public QuestionDetailViewModel QuestionDetailViewModel
         {
             get { return ServiceLocator.Current.GetInstance<QuestionDetailViewModel>(); }
         }

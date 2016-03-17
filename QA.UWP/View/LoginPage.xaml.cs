@@ -1,4 +1,5 @@
-﻿using QA.UWP.ViewModel;
+﻿using QA.UWP.Core;
+using QA.UWP.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,12 +24,21 @@ namespace QA.UWP.View
     /// </summary>
     public sealed partial class LoginPage : Page
     {
+        INavigatable vm;
         public LoginPage()
         {
             this.InitializeComponent();
-            MainViewModel = DataContext as LoginViewModel;
+            vm = DataContext as INavigatable;
         }
 
-        public LoginViewModel MainViewModel { get; set; }
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            vm.NavigateFrom(e);
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            vm.NavigateTo(e);
+        }
     }
 }

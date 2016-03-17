@@ -1,4 +1,5 @@
-﻿using QA.UWP.ViewModel;
+﻿using QA.UWP.Core;
+using QA.UWP.ViewModel;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -11,11 +12,11 @@ namespace QA.UWP.View
     /// </summary>
     public sealed partial class QuestionDetailPage : Page
     {
-        QuestionDetailViewModel vm;
+        INavigatable vm;
         public QuestionDetailPage()
         {
             this.InitializeComponent();
-            vm = this.DataContext as QuestionDetailViewModel;
+            vm = this.DataContext as INavigatable;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

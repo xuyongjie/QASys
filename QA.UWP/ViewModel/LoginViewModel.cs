@@ -11,10 +11,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WebApi.Client;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml;
+using Microsoft.Practices.ServiceLocation;
 
 namespace QA.UWP.ViewModel
 {
-    public class LoginViewModel : MyViewModelBase
+    public class LoginViewModel : MyViewModelBase,INavigatable
     {
         public LoginViewModel()
         {
@@ -109,6 +112,16 @@ namespace QA.UWP.ViewModel
                         NavigationService.NavigateTo(typeof(RegisterViewModel).FullName);
                     }));
             }
+        }
+
+        public void NavigateTo(object parameter)
+        {
+            (Window.Current.Content as Frame).BackStack.Clear();
+        }
+
+        public void NavigateFrom(object parameter)
+        {
+
         }
     }
 }

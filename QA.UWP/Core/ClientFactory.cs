@@ -8,8 +8,8 @@ namespace QA.UWP.Core
     public static class ClientFactory
     {
         // HTTPS address is required by the WebAuthenticationBroker
-        public const string BaseAddress = "http://localhost:53669/";
-        //public const string BaseAddress = "http://xyjvd.cloudapp.net:8086";
+        //public const string BaseAddress = "http://localhost:53669/";
+        public const string BaseAddress = "http://xyjvd.cloudapp.net:8086/";
 
         public static HttpClient CreateHttpClient()
         {
@@ -27,7 +27,7 @@ namespace QA.UWP.Core
             return new AccountClient(CreateHttpClient());
         }
 
-        public static QAClient CreateTravelClient()
+        public static QAClient CreateQAClient()
         {
             return new QAClient(CreateHttpClient());
         }

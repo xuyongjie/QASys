@@ -17,6 +17,7 @@ using Microsoft.AspNet.Identity;
 
 namespace QA.Controllers
 {
+    [Authorize]
     public class AnswersController : ApiController
     {
         private readonly IAnswerRepository repo = new AnswerRepository();
@@ -49,6 +50,7 @@ namespace QA.Controllers
         [HttpPost]
         public IHttpActionResult PostAnswer(Answer answer)
         {
+            answer.FromUserId = User.Identity.GetUserId();
             if (repo.CreateAnswer(answer) == 1)
             {
                 Dictionary<string, object> values = new Dictionary<string, object>();

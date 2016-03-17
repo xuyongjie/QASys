@@ -7,16 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-    DataContext="{Binding CreateActivityViewModel,Source={StaticResource Locator}}"
+    DataContext="{Binding CreateQuestionViewModel,Source={StaticResource Locator}}"
     mc:Ignorable="d">
     <Page.BottomAppBar>
         <CommandBar Background="{StaticResource AppMainBrush2}">
             <CommandBar.PrimaryCommands>
-                <AppBarButton Label="Cancel">
-                    <AppBarButton.Icon>
-                        <SymbolIcon Symbol="Cancel"/>
-                    </AppBarButton.Icon>
-                </AppBarButton>
                 <AppBarButton Label="Ok" Command="{Binding CreateCommand}">
                     <AppBarButton.Icon>
                         <SymbolIcon Symbol="Save"/>
@@ -25,61 +20,12 @@
             </CommandBar.PrimaryCommands>
         </CommandBar>
     </Page.BottomAppBar>
-    <Interactivity:Interaction.Behaviors>
-        <Core:EventTriggerBehavior EventName="Loaded">
-            <Core:InvokeCommandAction Command="{Binding LoadCommand}"/>
-        </Core:EventTriggerBehavior>
-    </Interactivity:Interaction.Behaviors>
 
     <Grid Style="{StaticResource RootGirdStyle}">
-        <StackPanel Margin="0,80,0,0">
-            <TextBox PlaceholderText="主题" Text="{Binding NewActivity.Title,Mode=TwoWay}" Style="{StaticResource OriginalTextBoxStyle}"/>
-            <TextBox PlaceholderText="描述" Text="{Binding NewActivity.Description,Mode=TwoWay}" Style="{StaticResource OriginalTextBoxStyle}"
-                     MinHeight="80" TextWrapping="Wrap"/>
-            <TextBox PlaceholderText="地点" Text="{Binding NewScenerySpot.GeographicLocation}" Style="{StaticResource OriginalTextBoxStyle}"
-                     IsEnabled="False"/>
-
-            <GridView Width="{StaticResource OriginalTextBoxWidth}" ItemsSource="{Binding Participants}" MinHeight="80" MaxHeight="160">
-                <GridView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <Image Height="40" Width="40" Source="{Binding Avatar}"/>
-                            <TextBlock Text="{Binding UserName}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </GridView.ItemTemplate>
-                <GridView.Header>
-                    <TextBlock Style="{StaticResource NormalTextBlockStyle}" Text="参与人"/>
-                </GridView.Header>
-            </GridView>
-            <ComboBox PlaceholderText="类型" ItemsSource="{Binding ActivityTypes}" SelectedItem="{Binding SelectEventType,Mode=TwoWay}" Style="{StaticResource BaseComboBoxStyle}" HorizontalAlignment="Center">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="0.3*"/>
-                                <ColumnDefinition Width="0.7*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding TypeName}"/>
-                            <TextBlock Text="{Binding TypeDescription}" Grid.Column="1"/>
-                        </Grid>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            <ComboBox PlaceholderText="状态" ItemsSource="{Binding ActivityStates}" SelectedItem="{Binding SelectedEventState,Mode=TwoWay}" Style="{StaticResource BaseComboBoxStyle}" HorizontalAlignment="Center">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="0.3*"/>
-                                <ColumnDefinition Width="0.7*"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="{Binding StateName}"/>
-                            <TextBlock Text="{Binding StateDescription}" Grid.Column="1"/>
-                        </Grid>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
+        <StackPanel Margin="0,50,0,0">
+            <TextBox PlaceholderText="主题" Text="{Binding Title,Mode=TwoWay}" Style="{StaticResource OriginalTextBoxStyle}"/>
+            <TextBox PlaceholderText="描述" TextWrapping="Wrap" Text="{Binding Content,Mode=TwoWay}" Height="100" Style="{StaticResource OriginalTextBoxStyle}"/>
+            <TextBlock Text="{Binding ErrorMessage}" HorizontalAlignment="Center" Style="{StaticResource ErrorTextBlockStyle}"/>
         </StackPanel>
     </Grid>
 </Page>

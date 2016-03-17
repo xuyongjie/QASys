@@ -1,4 +1,5 @@
 ﻿using Entity;
+using Entity.EntityDTO;
 using GalaSoft.MvvmLight.Command;
 using QA.UWP.Core;
 using QA.UWP.Model;
@@ -14,29 +15,28 @@ namespace QA.UWP.ViewModel
     {
         public CreateQuestionViewModel()
         {
-            _participants = new ObservableCollection<User>();
-            _participants.Add(new User { Avatar = "/Assets/StoreLogo.png", UserName = "Add" });
         }
 
 
-        private ObservableCollection<User> _participants;
-        public ObservableCollection<User> Participants
+        private string _errorMessage;
+        public string ErrorMessage
         {
-            get { return _participants; }
-            set { Set(ref _participants, value); }
+            get { return _errorMessage; }
+            set { Set(ref _errorMessage, value); }
         }
 
-
-
-        private RelayCommand _loadCommand;
-        public RelayCommand LoadCommand
+        private string _title;
+        public string Title
         {
-            get
-            {
-                return _loadCommand ?? (_loadCommand = new RelayCommand(() =>
-                {
-                }));
-            }
+            get { return _title; }
+            set { Set(ref _title, value); }
+        }
+
+        private string _content;
+        public string Content
+        {
+            get { return _content; }
+            set { Set(ref _content, value); }
         }
 
         private RelayCommand _createCommand;
@@ -51,31 +51,29 @@ namespace QA.UWP.ViewModel
             }
         }
 
-        private Question _newQuestion;
-        public Question NewQuestion
-        {
-            get { return _newQuestion; }
-            set
-            {
-                Set(ref _newQuestion, value);
-            }
-        }
-
         private async Task PostQuestionAsync()
         {
-            HttpResult<Question> result;
-            using (var client = ClientFactory.CreateTravelClient())
+            HttpResult<QuestionDTO> result;
+            if (string.IsNullOrEmpty(Title) || string.IsNullOrEmpty(Content))
             {
-                //result = await client.PostEventAsync(NewQuestion);
-                //if (result != null && result.Succeeded)
-                //{
-                //    //MessengerInstance.Send(result.Content, "SelectedActivity");
-                //    NavigationService.NavigateTo(typeof(QuestionDetailViewModel).FullName, NewQuestion);
-                //}
-                //else
-                //{
+                ErrorMessage = "主题或内容不能为空";
+                return;
+            }
+            using (var client = ClientFactory.CreateQAClient())
+            {
+                Question question = new Question();
+                question.Content = Content;
+                question.Title = Title;
+                result = await client.PostQuestionAsync(question);
+                if (result != null && result.Succeeded)
+                {
+                    NavigationService.GoBack();
+                    //NavigationService.NavigateTo(typeof(QuestionDetailViewModel).FullName, result);
+                }
+                else
+                {
 
-                //}
+                }
             }
         }
     }

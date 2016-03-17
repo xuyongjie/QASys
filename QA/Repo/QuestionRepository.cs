@@ -22,7 +22,7 @@ namespace QA.Repo
         {
             var questionQuery = from q in dbContext.Questions
                                 join u in dbContext.Users on q.UserId equals u.Id
-                                orderby q.CreateTime
+                                orderby q.CreateTime descending
                                 select new QuestionDTO()
                                 {
                                     Id = q.Id,
@@ -42,8 +42,8 @@ namespace QA.Repo
         {
             var questionQuery = from qa in dbContext.QuestionAttentions
                                 where qa.UserId == userId
-                                join u in dbContext.Users on qa.UserId equals u.Id
                                 join q in dbContext.Questions on qa.QuestionId equals q.Id
+                                join u in dbContext.Users on q.UserId equals u.Id
                                 orderby qa.CreateTime descending
                                 select new QuestionDTO
                                 {
@@ -88,44 +88,76 @@ namespace QA.Repo
                                     select u;
             var user = questionUserQuery.FirstOrDefault();
 
-
             var toAnswerAnswersQuery = from a in dbContext.Answers
                                        where a.QuestionId == questionId && a.AnswerType == 1
                                        join fu in dbContext.Users on a.FromUserId equals fu.Id
                                        join ta in dbContext.Answers on a.ToAnswerId equals ta.Id
-                                       join tafu in dbContext.Users on ta.FromUserId equals tafu.Id
+                                       join tafu in dbContext.Users on ta.FromUserId equals tafu.Id orderby a.CreateTime
                                        select new AnswerDTO
                                        {
-                                           Id=a.Id,
+                                           Id = a.Id,
                                            Content = a.Content,
                                            CreateTime = a.CreateTime,
                                            FromUserId = a.FromUserId,
+                                           AnswerType=a.AnswerType,
                                            ToAnswerId = a.ToAnswerId,
                                            FromUserNickName = fu.NickName,
                                            ToUserId = ta.FromUserId,
                                            ToUserNickName = tafu.NickName,
                                            QuestionId = a.QuestionId,
+                                           NiceOrNot = string.IsNullOrEmpty(userId) ? false : dbContext.Nices.Where(n => n.AnswerId == a.Id && n.UserId == userId).Count() > 0,
                                            NiceCount = dbContext.Nices.Where(n => n.AnswerId == a.Id).Count()
                                        };
             var toQuestionAnswersQuery = from a in dbContext.Answers
                                          where a.QuestionId == questionId && a.AnswerType == 0
-                                         join fu in dbContext.Users on a.FromUserId equals fu.Id
+                                         join fu in dbContext.Users on a.FromUserId equals fu.Id orderby a.CreateTime
                                          select new AnswerDTO
                                          {
-                                             Id=a.Id,
+                                             Id = a.Id,
                                              Content = a.Content,
                                              CreateTime = a.CreateTime,
                                              FromUserId = a.FromUserId,
+                                             AnswerType=a.AnswerType,
                                              ToAnswerId = a.ToAnswerId,
                                              FromUserNickName = fu.NickName,
                                              ToUserId = user.Id,
                                              ToUserNickName = user.NickName,
                                              QuestionId = a.QuestionId,
+                                             NiceOrNot = string.IsNullOrEmpty(userId) ? false : dbContext.Nices.Where(n => n.AnswerId == a.Id && n.UserId == userId).Count() > 0,
                                              NiceCount = dbContext.Nices.Where(n => n.AnswerId == a.Id).Count()
                                          };
 
-            var answers = toQuestionAnswersQuery.ToList();
-            answers.AddRange(toAnswerAnswersQuery.ToList());
+            var toQuestionAnswers = toQuestionAnswersQuery.ToList();
+            var toAnswerAnswers = toAnswerAnswersQuery.ToList();
+            List<AnswerDTO> sequenceAnswers = new List<AnswerDTO>();
+            if (toQuestionAnswers != null)
+            {
+                foreach(var item in toQuestionAnswers)
+                {
+                    sequenceAnswers.Add(item);
+                    if(toAnswerAnswers!=null)
+                    {
+                        while(true)
+                        {
+                            var last=sequenceAnswers[sequenceAnswers.Count - 1];
+                            int i;
+                            for(i=0; i<toAnswerAnswers.Count; i++)
+                            {
+                                var temp = toAnswerAnswers[i];
+                                if(temp.ToAnswerId==last.Id)
+                                {
+                                    sequenceAnswers.Add(temp);
+                                    break;
+                                }
+                            }
+                            if(i==toAnswerAnswers.Count)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
 
             bool attented = false;
             if (!string.IsNullOrEmpty(userId))
@@ -148,13 +180,14 @@ namespace QA.Repo
                                           CreateTime = q.CreateTime,
                                           UserId = u.Id,
                                           UserNickName = u.NickName,
+                                          AnswerCount = sequenceAnswers.Count,
                                           AttentedOrNot = attented,
                                           UserHeadImageUrl = u.HeadImageUrl,
                                       };
             var result = questionDetailQuery.FirstOrDefault();
-            if(result!=null)
+            if (result != null)
             {
-                result.Answers = answers;
+                result.Answers = sequenceAnswers;
             }
             return result;
         }

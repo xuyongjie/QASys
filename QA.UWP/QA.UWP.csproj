@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>QA.UWP</RootNamespace>
     <AssemblyName>QA.UWP</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
+    <DefaultLanguage>zh-cn</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.10240.0</TargetPlatformMinVersion>
@@ -17,6 +17,11 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <PackageCertificateKeyFile>QA.UWP_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxBundle>Always</AppxBundle>
+    <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <PackageCertificateThumbprint>0BD25DA265839A7928BE9006EAA37EACE00B42A0</PackageCertificateThumbprint>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -95,9 +100,14 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converter\AttentionOrNotToTextConverter.cs" />
     <Compile Include="Converter\BoolToVisibilityConvertor.cs" />
+    <Compile Include="Converter\DateTimeToTextConverter.cs" />
+    <Compile Include="Converter\NiceOrNotToTextConverter.cs" />
     <Compile Include="Converter\NodeTypeIdToTypeImagePathConverter.cs" />
     <Compile Include="Converter\NullableDoubleConverter.cs" />
+    <Compile Include="Converter\OneZeroToVisibilityConverter.cs" />
+    <Compile Include="Converter\ReverseVisibilityConverter.cs" />
     <Compile Include="Core\AccessTokenProvider.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\ClientFactory.cs" />
@@ -145,7 +155,6 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="QA.UWP_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Properties\Default.rd.xml" />

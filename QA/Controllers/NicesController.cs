@@ -49,6 +49,7 @@ namespace QA.Controllers
         [HttpPost]
         public IHttpActionResult PostNice(Nice nice)
         {
+            nice.UserId = User.Identity.GetUserId();
             if (repo.CreateNice(nice)==1)
             {
                 Dictionary<string, object> values = new Dictionary<string, object>();
@@ -67,9 +68,9 @@ namespace QA.Controllers
         [ResponseType(typeof(void))]
         [ActionName("Remove")]
         [HttpDelete]
-        public IHttpActionResult DeleteNice(int answerId)
+        public IHttpActionResult DeleteNice(int id)
         {
-            if (repo.RemoveNice(UserManager.FindByName(User.Identity.Name).Id, answerId) == 1)
+            if (repo.RemoveNice(UserManager.FindByName(User.Identity.Name).Id, id) == 1)
             {
                 return Ok();
             }

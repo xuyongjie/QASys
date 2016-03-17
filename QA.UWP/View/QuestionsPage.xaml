@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-    DataContext="{Binding MyActivitiesViewModel,Source={StaticResource Locator}}"
+    DataContext="{Binding QuestionsViewModel,Source={StaticResource Locator}}"
     mc:Ignorable="d">
     <Interactivity:Interaction.Behaviors>
         <Core:EventTriggerBehavior EventName="Loaded">
@@ -15,13 +15,19 @@
     </Interactivity:Interaction.Behaviors>
     <Page.Resources>
         <DataTemplate x:Key="QuestionTemplate">
-            <Grid>
+            <Grid Margin="10">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="{Binding Title}"/>
-                    <TextBlock Text="{Binding Content}"/>
-                    <TextBlock Text="{Binding UserNickName}"/>
-                    <TextBlock Text="{Binding AnswerCount}"/>
-                    <TextBlock Text="{Binding CreateTime}"/>
+                    <TextBlock Text="{Binding Title}" FontWeight="Medium" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                    <TextBlock Text="{Binding Content}" FontWeight="Medium" Margin="0,2,0,0"/>
+                    <TextBlock Margin="0,2,0,0">
+                        <Run Text="提问人："/>
+                        <Run Text="{Binding UserNickName}"/>
+                    </TextBlock>
+                    <TextBlock Margin="0,2,0,0">
+                        <Run Text="{Binding AnswerCount}"/>
+                        <Run Text="个回答"/>
+                    </TextBlock>
+                    <TextBlock Margin="0,2,0,0" Text="{Binding CreateTime,Converter={StaticResource DateTimeToTextConverter}}" Style="{StaticResource CaptionTextBlockStyle}"/>
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -49,6 +55,11 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="{StaticResource PureWhiteBrush}">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="Tapped">
+                        <Core:InvokeCommandAction Command="{Binding UserInfoCommand}"/>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
                 <TextBlock Text="{Binding MyInfo.NickName}" Style="{StaticResource NormalTextBlockStyle}" VerticalAlignment="Center" Margin="0" Foreground="{StaticResource PureBlackBrush}"/>
                 <Ellipse Height="40" Width="40" Margin="8,0,8,0">
                     <Ellipse.Fill>
@@ -62,16 +73,24 @@
             <PivotItem Header="所有问题">
                 <!--Pivot content goes here-->
                 <Grid>
-                    <ListView ItemsSource="{Binding AllQuestions}" ItemTemplate="{StaticResource QuestionTemplate}">
-                        
+                    <ListView ItemsSource="{Binding AllQuestions}" SelectionMode="None" IsItemClickEnabled="True" ItemTemplate="{StaticResource QuestionTemplate}">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="ItemClick">
+                                <Core:InvokeCommandAction Command="{Binding ItemClickCommand}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
                     </ListView>
                 </Grid>
             </PivotItem>
             <PivotItem Header="我关注的问题">
                 <!--Pivot content goes here-->
                 <Grid>
-                    <ListView ItemsSource="{Binding MyAttentionQuestions}" ItemTemplate="{StaticResource QuestionTemplate}">
-                        
+                    <ListView ItemsSource="{Binding MyAttentionQuestions}" SelectionMode="None" IsItemClickEnabled="True" ItemTemplate="{StaticResource QuestionTemplate}">
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="ItemClick">
+                                <Core:InvokeCommandAction Command="{Binding ItemClickCommand}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
                     </ListView>
                 </Grid>
             </PivotItem>

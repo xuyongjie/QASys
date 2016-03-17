@@ -9,8 +9,11 @@
     <Application.Resources>
         <ResourceDictionary>
             <converter:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-            <converter:NullableDoubleConverter x:Key="NullableDoubleConverter"/>
-            <converter:NodeTypeIdToTypeImageUriConverter x:Key="NodeTypeIdToTypeImageUriConverter"/>
+            <converter:AttentionOrNotToTextConverter x:Key="AttentionOrNotToTextConverter"/>
+            <converter:NiceOrNotToTextConverter x:Key="NiceOrNotToTextConverter"/>
+            <converter:DateTimeToTextConverter x:Key="DateTimeToTextConverter"/>
+            <converter:OneZeroToVisibilityConverter x:Key="OneZeroToVisibilityConverter"/>
+            <converter:ReverseVisibilityConverter x:Key="ReverseVisibilityConverter"/>
             <locator:ViewModelLocator x:Key="Locator"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Skin/AppBaseStyle.xaml"/>

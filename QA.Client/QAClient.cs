@@ -14,12 +14,21 @@ namespace QA.Client
     {
         private const string QuestionPrefix = "api/Questions/";
         private const string AnswerPrefix = "api/Answers/";
+        private const string AttentionPrefix = "api/QuestionAttentions/";
+        private const string NicePrefix = "api/Nices/";
 
         private const string GetAllQuestions = "all";
         private const string GetAttentionQuestions = "attention";
-        private const string CreateQuestion = "";
+        private const string CreateQuestion = "create";
+        private const string QuestionDetail = "detail/";
 
-        private const string CreateAnswer = "";
+        private const string CreateAnswer = "create";
+
+        private const string CreateAttention = "create";
+        private const string RemoveAttention = "remove/";
+
+        private const string CreateNice = "create";
+        private const string RemoveNice = "remove/";
 
         public HttpClient HttpClient { get; private set; }
         private bool disposed;
@@ -51,14 +60,14 @@ namespace QA.Client
         public async Task<HttpResult<QuestionDetailDTO>> GetQuestionDetailByQuestionIdAsync(int questionId)
         {
             ThrowIfDisposed();
-            HttpResult<QuestionDetailDTO> result = await HttpClient.GetAsync<QuestionDetailDTO>(QuestionPrefix + questionId.ToString());
+            HttpResult<QuestionDetailDTO> result = await HttpClient.GetAsync<QuestionDetailDTO>(QuestionPrefix+QuestionDetail + questionId.ToString());
             return result;
         }
 
         public async Task<HttpResult<QuestionDTO>> PostQuestionAsync(Question question)
         {
             ThrowIfDisposed();
-            HttpResult<QuestionDTO> result = await HttpClient.PostAsJsonAsync<Question, QuestionDTO>(CreateQuestion, question);
+            HttpResult<QuestionDTO> result = await HttpClient.PostAsJsonAsync<Question, QuestionDTO>(QuestionPrefix+CreateQuestion, question);
             return result;
         }
 
@@ -68,10 +77,37 @@ namespace QA.Client
         public async Task<HttpResult<AnswerDTO>> PostAnswerAsync(Answer answer)
         {
             ThrowIfDisposed();
-            HttpResult<AnswerDTO> result = await HttpClient.PostAsJsonAsync<Answer, AnswerDTO>(CreateAnswer, answer);
+            HttpResult<AnswerDTO> result = await HttpClient.PostAsJsonAsync<Answer, AnswerDTO>(AnswerPrefix+CreateAnswer, answer);
             return result;
         }
 
+        public async Task<HttpResult<QuestionAttention>> PostAttentionAsync(QuestionAttention attention)
+        {
+            ThrowIfDisposed();
+            HttpResult<QuestionAttention> result = await HttpClient.PostAsJsonAsync<QuestionAttention, QuestionAttention>(AttentionPrefix + CreateAttention, attention);
+            return result;
+        }
+
+        public async Task<HttpResult> DeleteAttentionAsync(int questionId)
+        {
+            ThrowIfDisposed();
+            HttpResult result = await HttpClient.DeleteItemAsync(AttentionPrefix + RemoveAttention + questionId);
+            return result;
+        }
+
+        public async Task<HttpResult<Nice>> PostNiceAsync(Nice nice)
+        {
+            ThrowIfDisposed();
+            HttpResult<Nice> result = await HttpClient.PostAsJsonAsync<Nice, Nice>(NicePrefix + CreateNice, nice);
+            return result;
+        }
+
+        public async Task<HttpResult> DeleteNiceAsync(int answerId)
+        {
+            ThrowIfDisposed();
+            HttpResult result = await HttpClient.DeleteItemAsync(NicePrefix + RemoveNice + answerId);
+            return result;
+        }
 
         public void Dispose()
         {

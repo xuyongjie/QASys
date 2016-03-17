@@ -6,135 +6,73 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-    DataContext="{Binding ActivityDetailViewModel,Source={StaticResource Locator}}"
+    DataContext="{Binding QuestionDetailViewModel,Source={StaticResource Locator}}"
     mc:Ignorable="d">
     <Page.Resources>
-        <DataTemplate x:Key="NodeDataTemplate">
-            <Grid Height="100">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="0.1*"/>
-                    <ColumnDefinition Width="0.9*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
-                <TextBlock Text="{Binding CreatorId}" Grid.Column="1" Grid.Row="0"/>
-                <TextBlock Text="{Binding Cost}" Grid.Column="1" Grid.Row="1"/>
-                <TextBlock Text="{Binding Comment}" Grid.Column="1" Grid.Row="2"/>
-            </Grid>
-        </DataTemplate>
-        <Flyout x:Key="AddNodeFlyout">
-            <Grid Height="160" Width="100">
-                <StackPanel>
-                    <ComboBox PlaceholderText="类型" ItemsSource="{Binding NodeTypes}" SelectedItem="{Binding SelectedNodeType,Mode=TwoWay}" Style="{StaticResource BaseComboBoxStyle}" HorizontalAlignment="Center">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="0.3*"/>
-                                        <ColumnDefinition Width="0.7*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Image Height="40" Width="40" Source="{Binding Id,Converter={StaticResource NodeTypeIdToTypeImageUriConverter}}"/>
-                                    <StackPanel Grid.Column="1">
-                                        <TextBlock Text="{Binding Name}"/>
-                                        <TextBlock Text="{Binding Description}" Grid.Column="1"/>
-                                    </StackPanel>
-                                </Grid>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <Button Content="ok" Style="{StaticResource NormalButtonStyle}" Command="{Binding AddNodeSubmitCommand}"/>
+        <Flyout x:Key="AddAnswerFlyout">
+            <Grid Height="160" Width="280">
+                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBox TextWrapping="Wrap" PlaceholderText="{Binding AnswerHolderText,Source={Binding QuestionDetailViewModel,Source={StaticResource Locator}}}" Text="{Binding AnswerContent,Source={Binding QuestionDetailViewModel,Source={StaticResource Locator}},Mode=TwoWay}" Width="180" Height="80" VerticalAlignment="Center"/>
+                    <Button Margin="0,20,0,0" Style="{StaticResource NormalButtonStyle}" Content="确定" VerticalAlignment="Center" Command="{Binding AddAnswerSubmitCommand,Source={Binding QuestionDetailViewModel,Source={StaticResource Locator}}}"/>
                 </StackPanel>
             </Grid>
         </Flyout>
+        <DataTemplate x:Key="AnswerDataTemplate">
+            <StackPanel Margin="10" Orientation="Horizontal">
+                <Grid Name="PositionGrid" Width="5" Margin="20,0,10,0" Background="{StaticResource AppMainBrush1}"  Visibility="{Binding AnswerType,Converter={StaticResource OneZeroToVisibilityConverter}}"/>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Visibility="{Binding ElementName=PositionGrid,Path=Visibility,Converter={StaticResource ReverseVisibilityConverter}}">
+                        <Run Text="{Binding FromUserNickName}" Foreground="Blue"/>
+                    </TextBlock>
+                    <TextBlock Visibility="{Binding ElementName=PositionGrid,Path=Visibility}">
+                        <Run Text="{Binding FromUserNickName}" Foreground="Blue"/>
+                        <Run Text="@"/>
+                        <Run Text="{Binding ToUserNickName}" Foreground="Blue"/>
+                        <Run Text=":"/>
+                    </TextBlock>
+                    <TextBlock Margin="0,2,0,0" Text="{Binding Content}"/>
+                    <StackPanel Margin="0,2,0,0" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Text="{Binding CreateTime,Converter={StaticResource DateTimeToTextConverter}}" VerticalAlignment="Center"/>
+                        <TextBlock Margin="20,0,0,0"  VerticalAlignment="Center">
+                        <Run Foreground="DarkBlue" Text="{Binding NiceCount}"/>
+                        <Run Text="个赞"/>
+                        </TextBlock>
+                        <HyperlinkButton Margin="20,0,0,0" Content="{Binding NiceOrNot,Converter={StaticResource NiceOrNotToTextConverter}}" VerticalAlignment="Center" Command="{Binding NiceCommand,Source={Binding QuestionDetailViewModel,Source={StaticResource Locator}}}" CommandParameter="{Binding Id}"/>
+                        <Button Margin="20,0,0,0" Flyout="{StaticResource AddAnswerFlyout}" Content="评论" Command="{Binding CommentToAnswerCommand,Source={Binding QuestionDetailViewModel,Source={StaticResource Locator}}}" CommandParameter="{Binding Id}"/>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
     </Page.Resources>
-
-    <!--<Page.BottomAppBar>
-        <CommandBar>
-            <CommandBar.PrimaryCommands>
-                <AppBarButton Flyout="{StaticResource AddNodeFlyout}" Label="添加" Command="{Binding CreateCommand}">
-                    <AppBarButton.Icon>
-                        <SymbolIcon Symbol="Add"/>
-                    </AppBarButton.Icon>
-                </AppBarButton>
-            </CommandBar.PrimaryCommands>
-        </CommandBar>
-    </Page.BottomAppBar>-->
-    <Grid Style="{StaticResource RootGirdStyle}" Padding="0">
-
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition Height="120"/>
-        </Grid.RowDefinitions>
-        <ListView ItemsSource="{Binding Nodes}" ItemTemplate="{StaticResource NodeDataTemplate}">
+    <Grid Style="{StaticResource RootGirdStyle}">
+        <ListView ItemsSource="{Binding CurrentQuestionDetail.Answers}" SelectionMode="None" IsItemClickEnabled="False" ItemTemplate="{StaticResource AnswerDataTemplate}">
             <ListView.Header>
-                <Grid>
+                <Grid Padding="10">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
                         <RowDefinition/>
                         <RowDefinition/>
+                        <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="{Binding CurrentEvent.Title}" Style="{StaticResource NormalTextBlockStyle}"/>
-                    <TextBlock Text="{Binding CurrentEvent.Description}" Style="{StaticResource NormalTextBlockStyle}" Grid.Row="1"/>
-                    <TextBlock Text="{Binding CurrentEvent.CreatorId}" Style="{StaticResource NormalTextBlockStyle}" Grid.Row="2"/>
-                    <TextBlock Style="{StaticResource NormalTextBlockStyle}" Grid.Row="3">
-                <Run Text="参与人("/>
-                <Run Text="{Binding CurrentEvent.TotalMember}"/>
-                <Run Text="):"/>
-                <Run Text="{Binding CurrentEvent.Participants}"/>
+                    <TextBlock Grid.Row="0" Text="{Binding CurrentQuestionDetail.Title}" Style="{StaticResource TitleTextBlockStyle}" FontWeight="Medium"/>
+                    <TextBlock Margin="0,2,0,0" Grid.Row="1" Text="{Binding CurrentQuestionDetail.Content}"/>
+                    <TextBlock Margin="0,2,0,0" Grid.Row="2"  VerticalAlignment="Center">
+                        <Run Text="提问人："/>
+                        <Run Text="{Binding CurrentQuestionDetail.UserNickName}"/>
                     </TextBlock>
-                    <TextBlock Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
-                <Run Text="总支出:" Foreground="White"/>
-                <Run Text="{Binding CurrentEvent.TotalCost}" Foreground="White" FontSize="30"/>
-                <Run Text="￥" Foreground="White"/>
-                    </TextBlock>
-                    <TextBlock Grid.Row="2" Grid.Column="1" Grid.RowSpan="2">
-                <Run Text="人均支出:" Foreground="White"/>
-                <Run Text="{Binding CurrentEvent.AverageCost}" Foreground="White" FontSize="30"/>
-                <Run Text="￥" Foreground="White"/>
-                    </TextBlock>
+                    <TextBlock Margin="0,2,0,0" Grid.Row="3" Style="{StaticResource CaptionTextBlockStyle}"  Text="{Binding CurrentQuestionDetail.CreateTime,Converter={StaticResource DateTimeToTextConverter}}"/>
+                    <StackPanel Margin="0,2,0,0" Grid.Row="4" Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center" Margin="0,0,20,0">
+                        <Run Text="{Binding CurrentQuestionDetail.AnswerCount}"/>
+                        <Run Text="个回答"/>
+                        </TextBlock>
+                        <Button Margin="0,0,20,0" Flyout="{StaticResource AddAnswerFlyout}" Content="回答该问题" VerticalAlignment="Center" Command="{Binding AnswerToQuestionCommand}"/>
+                        <HyperlinkButton  VerticalAlignment="Center" Content="{Binding CurrentQuestionDetail.AttentedOrNot,Converter={StaticResource AttentionOrNotToTextConverter}}" Command="{Binding AttentionCommand}"/>
+                    </StackPanel>
                 </Grid>
             </ListView.Header>
         </ListView>
-        <Grid Grid.Row="1" Background="{StaticResource PureWhiteBrush}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="48"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <RelativePanel Margin="10,0,10,0">
-                <Image Margin="5" Name="AddImage" Source="/Resource/Images/imageicon.png" HorizontalAlignment="Left" RelativePanel.AlignVerticalCenterWithPanel="True">
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:EventTriggerBehavior EventName="Tapped">
-                            <Core:InvokeCommandAction Command="{Binding ChooseImageCommand}"/>
-                        </Core:EventTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
-                </Image>
-                <TextBox Visibility="{Binding ElementName=CostCheckBox,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}" Name="CostTextBox" Style="{StaticResource NormalTextBoxStyle}" Margin="0" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True"/>
-                <CheckBox Name="CostCheckBox" IsChecked="{Binding IsCost,Mode=TwoWay}" FlowDirection="RightToLeft" Margin="0,0,10,0" Content="支出" RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.LeftOf="CostTextBox"/>
-                <ListView Margin="5" RelativePanel.RightOf="AddImage" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding SelectedImages}" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignTopWithPanel="True" RelativePanel.LeftOf="CostCheckBox">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"/>
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding ImagePath}" Foreground="Red"/>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </RelativePanel>
-            <RelativePanel Grid.Row="1" Margin="10,0,0,0">
-                <Button Name="SendButton" Content="发送" Margin="5" Style="{StaticResource NormalButtonStyle}" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True"/>
-                <TextBox Text="{Binding NewNode.Comment,Mode=TwoWay}" BorderThickness="0" Padding="0" Margin="0,0,5,0" TextWrapping="Wrap" RelativePanel.AlignLeftWithPanel="True" RelativePanel.LeftOf="SendButton" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True"/>
-            </RelativePanel>
-        </Grid>
+        <ProgressRing Grid.Row="1" IsActive="{Binding IsLoading}" Style="{StaticResource BigProgressBarStyle}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </Grid>
 </Page>

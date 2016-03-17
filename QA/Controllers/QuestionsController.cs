@@ -47,7 +47,7 @@ namespace QA.Controllers
         [ActionName("Attention")]
         public IEnumerable<QuestionDTO> GetAttentionQuestions()
         {
-            return repo.GetAttentionQuestions(UserManager.FindByName(User.Identity.Name).Id);
+            return repo.GetAttentionQuestions(User.Identity.GetUserId());
         }
 
         // GET: api/Questions/detail/5
@@ -60,7 +60,7 @@ namespace QA.Controllers
             string userId = null;
             if (User.Identity.IsAuthenticated)
             {
-                userId = UserManager.FindByName(User.Identity.Name).Id;
+                userId =User.Identity.GetUserId();
             }
             QuestionDetailDTO question = repo.GetQuestionDetailById(userId, id);
             if (question == null)
@@ -82,7 +82,7 @@ namespace QA.Controllers
                 return BadRequest(ModelState);
             }
 
-            int result = repo.UpdateQuestion(UserManager.FindByName(User.Identity.Name).Id, id, question);
+            int result = repo.UpdateQuestion(User.Identity.Name, id, question);
             if (result == 1)
             {
                 return StatusCode(HttpStatusCode.NoContent);
@@ -100,8 +100,14 @@ namespace QA.Controllers
             {
                 return BadRequest(ModelState);
             }
+            question.UserId = User.Identity.GetUserId();
             if (repo.CreateQuestion(question) == 1)
             {
+                QuestionAttention attention = new QuestionAttention();
+                attention.UserId = User.Identity.GetUserId();
+                attention.QuestionId = question.Id;
+                IQuestionAttentionRepository repository = new QuestionAttentionRepository();
+                repository.CreateQuestionAttention(attention);
 
                 Dictionary<string, object> values = new Dictionary<string, object>();
                 values.Add("controller", "questions");
@@ -121,7 +127,7 @@ namespace QA.Controllers
         [HttpDelete]
         public IHttpActionResult DeleteQuestion(int id)
         {
-            return Ok(repo.DeleteQuestionById(UserManager.FindByName(User.Identity.Name).Id, id));
+            return Ok(repo.DeleteQuestionById(User.Identity.GetUserId(), id));
         }
 
         protected override void Dispose(bool disposing)

@@ -55,12 +55,12 @@
     </Style>
 
     <Style TargetType="ProgressRing" x:Key="BaseProgressRingStyle">
-        <Setter Property="Foreground" Value="{StaticResource AppMainBrush2}"/>
+        <Setter Property="Foreground" Value="{StaticResource AppMainBrush1}"/>
     </Style>
     
     <Style TargetType="ProgressRing" x:Key="BigProgressBarStyle" BasedOn="{StaticResource BaseProgressRingStyle}">
-        <Setter Property="Width" Value="80"/>
-        <Setter Property="Height" Value="80"/>
+        <Setter Property="Width" Value="60"/>
+        <Setter Property="Height" Value="60"/>
         
     </Style>
     <Style TargetType="ProgressRing" x:Key="MiddleProgressBarStyle" BasedOn="{StaticResource BaseProgressRingStyle}">
@@ -74,7 +74,6 @@
 
     <Style TargetType="Grid" x:Key="RootGirdStyle">
         <Setter Property="Padding" Value="{StaticResource RootPadding}"/>
-        <Setter Property="Background" Value="{StaticResource AppMainBrush1}"/>
     </Style>
 
     <Style TargetType="ComboBox" x:Key="BaseComboBoxStyle">

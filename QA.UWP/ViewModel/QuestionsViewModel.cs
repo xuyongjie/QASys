@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading.Tasks;
 using WebApi.Client;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace QA.UWP.ViewModel
@@ -19,7 +20,12 @@ namespace QA.UWP.ViewModel
         {
             _allQuestions = new ObservableCollection<QuestionDTO>();
             _myAttentionQuestions = new ObservableCollection<QuestionDTO>();
-            FirstLoad();
+            GetInfoAsync();
+        }
+
+        public async void GetInfoAsync()
+        {
+            await GetMyInfo();
         }
 
         private bool _isLoading;
@@ -91,7 +97,7 @@ namespace QA.UWP.ViewModel
         public async Task GetAllQuestions()
         {
             HttpResult<List<QuestionDTO>> result;
-            using (QAClient client = ClientFactory.CreateTravelClient())
+            using (QAClient client = ClientFactory.CreateQAClient())
             {
                 result = null;
                 result = await client.GetAllQuestionsAsync();
@@ -114,7 +120,7 @@ namespace QA.UWP.ViewModel
         public async Task GetMyAttentionQuestions()
         {
             HttpResult<List<QuestionDTO>> result;
-            using (QAClient client = ClientFactory.CreateTravelClient())
+            using (QAClient client = ClientFactory.CreateQAClient())
             {
                 result = null;
                 result = await client.GetAttentionQuestionsAsync();
@@ -136,16 +142,18 @@ namespace QA.UWP.ViewModel
 
         public void NavigateTo(object parameter)
         {
+            (Window.Current.Content
+                 as Frame).BackStack.Clear();
+            LoadQuestions();
         }
 
         public void NavigateFrom(object parameter)
         {
         }
 
-        private async void FirstLoad()
+        private async void LoadQuestions()
         {
             IsLoading = true;
-            await GetMyInfo();
             await GetAllQuestions();
             await GetMyAttentionQuestions();
             IsLoading = false;
@@ -191,8 +199,21 @@ namespace QA.UWP.ViewModel
                 return _itemClickCommand ?? (_itemClickCommand = new RelayCommand<object>((parameter) =>
               {
                   ItemClickEventArgs arg = parameter as ItemClickEventArgs;
-                  NavigationService.NavigateTo(typeof(QuestionDetailViewModel).FullName, arg.ClickedItem);
+                  QuestionDTO question = arg.ClickedItem as QuestionDTO;
+                  NavigationService.NavigateTo(typeof(QuestionDetailViewModel).FullName, question.Id);
               }));
+            }
+        }
+
+        private RelayCommand _userInfoCommand;
+        public RelayCommand UserInfoCommand
+        {
+            get
+            {
+                return _userInfoCommand ?? (_userInfoCommand = new RelayCommand(() =>
+                {
+                    NavigationService.NavigateTo(typeof(UserInfoViewModel).FullName, MyInfo);
+                }));
             }
         }
     }
