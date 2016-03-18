@@ -18,7 +18,7 @@
             </Grid>
         </Flyout>
         <DataTemplate x:Key="AnswerDataTemplate">
-            <StackPanel Margin="10" Orientation="Horizontal">
+            <StackPanel Margin="0,10,0,10" Orientation="Horizontal">
                 <Grid Name="PositionGrid" Width="5" Margin="20,0,10,0" Background="{StaticResource AppMainBrush1}"  Visibility="{Binding AnswerType,Converter={StaticResource OneZeroToVisibilityConverter}}"/>
                 <StackPanel Orientation="Vertical">
                     <TextBlock Visibility="{Binding ElementName=PositionGrid,Path=Visibility,Converter={StaticResource ReverseVisibilityConverter}}">
@@ -44,7 +44,7 @@
             </StackPanel>
         </DataTemplate>
     </Page.Resources>
-    <Grid Style="{StaticResource RootGirdStyle}">
+    <Grid Style="{StaticResource RootGirdStyle}" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListView ItemsSource="{Binding CurrentQuestionDetail.Answers}" SelectionMode="None" IsItemClickEnabled="False" ItemTemplate="{StaticResource AnswerDataTemplate}">
             <ListView.Header>
                 <Grid Padding="10">
